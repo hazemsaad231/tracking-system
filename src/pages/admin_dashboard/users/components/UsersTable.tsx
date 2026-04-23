@@ -1,7 +1,7 @@
 import type { User, ApiResponse } from "../types";
-// import RoleBadge from "./RoleBadge";
 import StatusBadge from "./StatusBadge";
 import SkeletonRow from "./SkeletonRow";
+import SkeletonCard from "./SkeletonCard";
 
 // ─── Table Header Columns ─────────────────────────────────────────────────────
 const COLUMNS = ["#", "الاسم", "البريد الإلكتروني", "رقم الهاتف", "الحالة", "إجراءات"];
@@ -27,9 +27,20 @@ const UsersTable = ({
 }: UsersTableProps) => {
   if (isLoading) {
     return (
-      <div className="p-4 space-y-4">
-        {Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)}
-      </div>
+      <>
+        {/* Mobile Skeleton */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 lg:hidden">
+          {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
+        </div>
+        {/* Desktop Skeleton */}
+        <div className="hidden lg:block">
+          <table className="w-full">
+            <tbody className="divide-y divide-slate-100 dark:divide-white/5">
+              {Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)}
+            </tbody>
+          </table>
+        </div>
+      </>
     );
   }
 

@@ -1,5 +1,6 @@
 import type { Permission } from "../types";
 import SkeletonRow from "./SkeletonRow";
+import SkeletonCard from "./SkeletonCard";
 
 const COLUMNS = ["#", "اسم الصلاحية", "تاريخ الإنشاء", "إجراءات"];
 
@@ -12,9 +13,20 @@ interface PermissionsTableProps {
 const PermissionsTable = ({ permissions, isLoading, onDelete }: PermissionsTableProps) => {
   if (isLoading) {
     return (
-      <div className="p-4 space-y-4">
-        {Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)}
-      </div>
+      <>
+        {/* Mobile Skeleton */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 lg:hidden">
+          {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
+        </div>
+        {/* Desktop Skeleton */}
+        <div className="hidden lg:block">
+          <table className="w-full">
+            <tbody className="divide-y divide-slate-100 dark:divide-white/5">
+              {Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)}
+            </tbody>
+          </table>
+        </div>
+      </>
     );
   }
 
