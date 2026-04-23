@@ -63,7 +63,7 @@ const Sidebar = () => {
         <Menu size={22} />
       </button>
       
-      <button
+      {/* <button
         onClick={() => setMobileOpen(!mobileOpen)}
         className={`fixed top-5 left-20 z-[60] lg:hidden w-10 h-10 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md text-white
           transform transition-all duration-300 ease-in-out
@@ -71,7 +71,7 @@ const Sidebar = () => {
         aria-label="إغلاق القائمة"
       >
         <X size={20} />
-      </button>
+      </button> */}
 
       {/* Sidebar */}
       <aside
@@ -85,7 +85,7 @@ const Sidebar = () => {
         <div className="absolute bottom-20 -right-10 w-32 h-32 bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
 
         {/* Logo */}
-        <div className="relative p-5 pb-4">
+        <div className="flex justify-between relative p-5 pb-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center shadow-lg shadow-violet-500/30">
               <Shield size={22} className="text-white" />
@@ -95,6 +95,14 @@ const Sidebar = () => {
               <p className="text-slate-400 text-[11px]">لوحة تحكم {isAdmin() ? 'المسؤول' : 'العميل'}</p>
             </div>
           </div>
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="lg:hidden w-10 h-10 bg-white/10 backdrop-blur-md flex items-center justify-center rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-all duration-200"
+            aria-label="إغلاق القائمة"
+          >
+            <X size={20} />
+          </button>
+          
         </div>
 
         <div className="mx-5 h-px bg-gradient-to-l from-transparent via-slate-600/50 to-transparent" />
