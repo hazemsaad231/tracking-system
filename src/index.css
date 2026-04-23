@@ -1,0 +1,109 @@
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Cairo (Variable Font) ─── */
+@font-face {
+  font-family: 'Cairo';
+  src: url('./assets/fonts/Cairo/Cairo-VariableFont_slnt,wght.ttf') format('truetype');
+  font-weight: 200 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ─── Tajawal ─── */
+@font-face {
+  font-family: 'Tajawal';
+  src: url('./assets/fonts/Tajawal/Tajawal-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Tajawal';
+  src: url('./assets/fonts/Tajawal/Tajawal-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Tajawal';
+  src: url('./assets/fonts/Tajawal/Tajawal-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Tajawal';
+  src: url('./assets/fonts/Tajawal/Tajawal-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Tajawal';
+  src: url('./assets/fonts/Tajawal/Tajawal-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Tajawal';
+  src: url('./assets/fonts/Tajawal/Tajawal-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Tajawal';
+  src: url('./assets/fonts/Tajawal/Tajawal-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ─── Almarai ─── */
+@font-face {
+  font-family: 'Almarai';
+  src: url('./assets/fonts/Almarai/Almarai-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Almarai';
+  src: url('./assets/fonts/Almarai/Almarai-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Almarai';
+  src: url('./assets/fonts/Almarai/Almarai-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Almarai';
+  src: url('./assets/fonts/Almarai/Almarai-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ─── Global Styles ─── */
+body {
+  font-family: 'Tajawal','Cairo', 'Almarai', sans-serif;
+  direction: rtl;
+}
+:root {
+  --bg-color: #0f172a;
+  --text-color: #ffffff;
+  --primary-color: #8b5cf6;
+  --secondary-color: #2563eb;
+  --card-bg: #1e293b;
+  --border-color: #334155;
+}
