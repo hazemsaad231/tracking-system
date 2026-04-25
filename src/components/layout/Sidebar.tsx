@@ -1,33 +1,19 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LogOut, Shield, Menu, X, House, FileChartColumnIncreasing, Wrench, Users, FilePlus2, FunnelPlus, ChevronRight } from 'lucide-react';
+import { LogOut, Shield, Menu, X, ChevronRight } from 'lucide-react';
 import { useAuthContext } from '../../context/AuthContext';
-
-const adminNavItems = [
-  { label: 'الرئيسية', icon: <House size={18} />, path: '/dashboard/overview' },
-  { label: 'المستخدمين', icon: <Users size={18} />, path: '/dashboard/users' },
-  { label: 'الأدوار', icon: <Shield size={18} />, path: '/dashboard/roles' },
-  { label: 'الصلاحيات', icon: <Shield size={18} />, path: '/dashboard/permissions' },
-  { label: 'الإعدادات', icon: <Wrench size={18} />, path: '/dashboard/settings' },
-];
-
-const clientNavItems = [
-  { label: 'الاحصائيات', icon: <House size={18} />, path: '/dashboard' },
-  { label: 'تقاريري', icon: <FileChartColumnIncreasing size={18} />, path: '/dashboard/reports' },
-  { label: 'خدماتي', icon: <Wrench size={18} />, path: '/dashboard/client-services' },
-  { label: 'إنشاء تقرير', icon: <FilePlus2 size={18} />, path: '/dashboard/new-report' },
-  { label: 'طلب خدمة', icon: <FunnelPlus size={18} />, path: '/dashboard/add-services' },
-  { label: 'الإعدادات', icon: <Wrench size={18} />, path: '/dashboard/settings' },
-];
+import NAVIGATION_MAP from './navConfig';
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout, user, isAdmin } = useAuthContext();
+  const { logout, user } = useAuthContext();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const navItems = isAdmin() ? adminNavItems : clientNavItems;
+  const userRole = user?.role || 'admin';
+  const navConfig = NAVIGATION_MAP[userRole];
+  const navItems = navConfig?.items || [];
 
   const handleLogout = () => {
     logout();
@@ -62,16 +48,6 @@ const Sidebar = () => {
       >
         <Menu size={22} />
       </button>
-      
-      {/* <button
-        onClick={() => setMobileOpen(!mobileOpen)}
-        className={`fixed top-5 left-20 z-[60] lg:hidden w-10 h-10 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md text-white
-          transform transition-all duration-300 ease-in-out
-          ${mobileOpen ? 'scale-100 opacity-100' : 'scale-90 opacity-0'}`}
-        aria-label="إغلاق القائمة"
-      >
-        <X size={20} />
-      </button> */}
 
       {/* Sidebar */}
       <aside
@@ -92,7 +68,7 @@ const Sidebar = () => {
             </div>
             <div>
               <h2 className="text-white font-bold text-lg tracking-tight">نظام التتبع</h2>
-              <p className="text-slate-400 text-[11px]">لوحة تحكم {isAdmin() ? 'المسؤول' : 'العميل'}</p>
+              <p className="text-slate-400 text-[11px]">لوحة تحكم {navConfig?.label || ''}</p>
             </div>
           </div>
           <button
@@ -153,7 +129,7 @@ const Sidebar = () => {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-white text-sm font-medium truncate">{user?.name || 'User'}</p>
-              <p className="text-slate-400 text-[11px] truncate">{isAdmin() ? 'مسؤول النظام' : 'عميل'}</p>
+              <p className="text-slate-400 text-[11px] truncate">{navConfig?.label || ''}</p>
             </div>
           </div>
           <button onClick={() => setShowConfirm(true)} className="mt-2.5 w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all duration-200 text-sm">

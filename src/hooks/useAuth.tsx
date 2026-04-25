@@ -62,7 +62,7 @@ export const useAuth = () => {
     localStorage.setItem('token', Data.data.token);
     localStorage.setItem('user', JSON.stringify(userData));
     success("تم تسجيل الدخول بنجاح");
-    setTimeout(() => navigate("/dashboard/overview"), 500);
+    setTimeout(() => navigate("/dashboard"), 500);
 
   } catch (error) {
     handleError(error);

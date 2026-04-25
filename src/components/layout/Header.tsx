@@ -8,9 +8,9 @@ import { useAuthContext } from '@/context/AuthContext';
 const Header: React.FC = () => {
   const location = useLocation();
   const { theme, setTheme } = useTheme();
-    const { user, isAdmin } = useAuthContext()
+    const { user } = useAuthContext()
 
-    console.log("Header Component Rendered. Current User:", user, "Is Admin:", isAdmin()) // ✅ تحقق من بيانات المستخدم وصلاحياته في الهيدر
+    console.log("Header Component Rendered. Current User:", user) // ✅ تحقق من بيانات المستخدم وصلاحياته في الهيدر
   
   const [showSearch, setShowSearch] = useState(false);
   const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);

@@ -26,7 +26,6 @@ const DeleteConfirmModal = ({
         className="fixed inset-0 z-50 bg-black/50 dark:bg-black/70 backdrop-blur-sm transition-opacity duration-300"
       />
       <div
-        dir="rtl"
         className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
       >
         <div className="pointer-events-auto w-full max-w-sm rounded-2xl shadow-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 p-6 flex flex-col items-center text-center">

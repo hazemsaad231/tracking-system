@@ -153,11 +153,6 @@ const Login = () => {
                         </button>
                     </form>
                 </div>
-
-                {/* نص تحت الكارد */}
-                <p className="text-center text-slate-500 dark:text-slate-500 text-xs mt-6">
-                    نظام التتبع — لوحة تحكم المسؤول
-                </p>
             </div>
         </div>
     );

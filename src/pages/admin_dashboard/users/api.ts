@@ -1,13 +1,10 @@
 import apiClient from "@/api/axios";
+
+
 import type { ApiResponse, User, UserDetailResponse, CreateUserPayload, UpdateUserPayload } from "./types";
 
 export const fetchUsers = async (): Promise<ApiResponse> => {
   const { data } = await apiClient.get("/users?per_page=15");
-  return data;
-};
-
-export const fetchRoles = async (): Promise<ApiResponse> => {
-  const { data } = await apiClient.get("/roles");
   return data;
 };
 
