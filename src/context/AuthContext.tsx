@@ -39,6 +39,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // ✅ تطبيق OCP: الفنكشن دي مش هتتغير أبداً حتى لو بقى عندك 100 دور
   const hasRole = (role: UserRole) => user?.role === role;
 
+
   return (
     <AuthContext.Provider value={{ user, setUser, logout, hasRole }}>
       {children}

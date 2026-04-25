@@ -43,6 +43,7 @@ const NAVIGATION_MAP: Record<UserRole, { label: string; items: { label: string; 
       { label: 'الإعدادات', icon: <Wrench size={18} />, path: '/dashboard/settings' },
     ],
   },
+
 };
 
 export default NAVIGATION_MAP;

@@ -5,13 +5,18 @@ import { useAuthContext } from '../../context/AuthContext';
 import NAVIGATION_MAP from './navConfig';
 
 const Sidebar = () => {
+
+
   const navigate = useNavigate();
   const location = useLocation();
+
   const { logout, user } = useAuthContext();
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const userRole = user?.role || 'admin';
+  const userRole = user?.role; 
+  if (!userRole) return null;
   const navConfig = NAVIGATION_MAP[userRole];
   const navItems = navConfig?.items || [];
 
