@@ -30,7 +30,7 @@ const DeleteFileModal = ({
           <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">حذف الملف</h3>
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
             هل أنت متأكد من حذف الملف{" "}
-            <span className="font-semibold text-slate-700 dark:text-slate-300">"{file.name}"</span>؟{" "}
+            <span className="font-semibold text-slate-700 dark:text-slate-300">"{file.title}"</span>؟{" "}
             لا يمكن التراجع عن هذا الإجراء.
           </p>
           <div className="flex w-full gap-3">
