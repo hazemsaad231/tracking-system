@@ -127,7 +127,6 @@ export default function UpdateFileModal({ file, categoryId, onClose }: Props) {
                 عنوان الملف <span className="text-red-500">*</span>
               </label>
               <input
-                autoFocus
                 type="text"
                 value={title}
                 onChange={(e) => { setTitle(e.target.value); setTitleError(""); }}

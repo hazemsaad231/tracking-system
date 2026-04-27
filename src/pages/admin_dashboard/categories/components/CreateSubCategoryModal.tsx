@@ -156,7 +156,6 @@ export default function CreateSubCategoryModal({ parentCategory, onClose }: Prop
 
             <Field label="اسم الفئة الفرعية" error={nameError}>
               <input
-                autoFocus
                 className={inputCls}
                 placeholder="مثال: iOS و Android"
                 value={name}
