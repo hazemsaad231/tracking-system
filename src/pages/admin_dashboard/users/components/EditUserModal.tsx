@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { updateUser } from "../api";
-import { USER_ROLES } from "../types";
-import type { User, UpdateUserPayload, UserRole } from "../types";
+import { fetchRoles } from "../../roles/api";
+import type { User, UpdateUserPayload } from "../types";
 
 // ─── Field ───────────────────────────────────────────────────────────────────
 const Field = ({
@@ -35,7 +35,7 @@ interface FormState {
   password?: string;
   phone: string;
   is_active: boolean;
-  role: UserRole;
+  role: string;
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -55,16 +55,14 @@ export default function EditUserModal({
     password: "",
     phone: "",
     is_active: true,
-    role: "client",
+    role: "",
   });
   const [errors, setErrors] = useState<Partial<FormState>>({});
 
   // Populate form when user changes
   useEffect(() => {
     if (user) {
-      const roleVal = (
-        user.roles && user.roles.length > 0 ? user.roles[0] : user.role ?? "client"
-      ) as UserRole;
+      const roleVal = user.roles && user.roles.length > 0 ? user.roles[0] : user.role ?? "";
       setForm({
         name: user.name,
         email: user.email,
@@ -85,6 +83,13 @@ export default function EditUserModal({
       onClose();
     },
   });
+
+  const { data: rolesData, isLoading: rolesLoading } = useQuery({
+    queryKey: ["roles"],
+    queryFn: fetchRoles,
+    staleTime: 5 * 60 * 1000,
+  });
+  const allRoles = rolesData?.data ?? [];
 
   const isPending = updateMutation.isPending;
   const apiError = updateMutation.error;
@@ -219,12 +224,20 @@ export default function EditUserModal({
                 className={inputCls}
                 value={form.role}
                 onChange={(e) => set("role", e.target.value)}
+                disabled={rolesLoading}
               >
-                {USER_ROLES.map((r) => (
-                  <option key={r.value} value={r.value}>
-                    {r.label}
-                  </option>
-                ))}
+                {rolesLoading ? (
+                  <option>جاري التحميل...</option>
+                ) : (
+                  <>
+                    <option value="">اختر دوراً</option>
+                    {allRoles.map((r) => (
+                      <option key={r.id} value={r.name}>
+                        {r.name}
+                      </option>
+                    ))}
+                  </>
+                )}
               </select>
             </Field>
 

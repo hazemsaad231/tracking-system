@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createRole } from "../api";
-import { AVAILABLE_PERMISSIONS } from "../types";
+import { fetchPermissions } from "../../permissions/api";
 import type { CreateRolePayload } from "../types";
 
 const Field = ({ label, children, error }: { label: string; children: React.ReactNode; error?: string }) => (
@@ -42,6 +42,13 @@ export default function CreateRoleModal({ isOpen, onClose }: { isOpen: boolean; 
       onClose();
     },
   });
+
+  const { data: permissionsData, isLoading: permissionsLoading } = useQuery({
+    queryKey: ["permissions"],
+    queryFn: fetchPermissions,
+    staleTime: 5 * 60 * 1000,
+  });
+  const allPermissions = permissionsData?.data ?? [];
 
   const isPending = mutation.isPending;
   const apiError = mutation.error;
@@ -134,30 +141,36 @@ export default function CreateRoleModal({ isOpen, onClose }: { isOpen: boolean; 
 
             <Field label="الصلاحيات الممنوحة" error={errors.permissions as unknown as string}>
               <div className="grid grid-cols-1 gap-2 mt-1">
-                {AVAILABLE_PERMISSIONS.map((perm) => (
-                  <label
-                    key={perm.value}
-                    className="flex items-center gap-3 p-2.5 rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/[0.02] hover:bg-slate-100 dark:hover:bg-white/[0.04] cursor-pointer transition-colors"
-                  >
-                    <div className="relative flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={form.permissions.includes(perm.value)}
-                        onChange={() => togglePermission(perm.value)}
-                        className="peer sr-only"
-                      />
-                      <div className="w-5 h-5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 peer-checked:bg-purple-600 peer-checked:border-purple-600 dark:peer-checked:bg-purple-500 dark:peer-checked:border-purple-500 transition-colors flex items-center justify-center">
-                        <svg className={`w-3.5 h-3.5 text-white ${form.permissions.includes(perm.value) ? 'opacity-100' : 'opacity-0'} transition-opacity`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
+                {permissionsLoading ? (
+                  Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="h-12 rounded-lg bg-slate-100 dark:bg-white/5 animate-pulse" />
+                  ))
+                ) : (
+                  allPermissions.map((perm) => (
+                    <label
+                      key={perm.id}
+                      className="flex items-center gap-3 p-2.5 rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/[0.02] hover:bg-slate-100 dark:hover:bg-white/[0.04] cursor-pointer transition-colors"
+                    >
+                      <div className="relative flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={form.permissions.includes(perm.name)}
+                          onChange={() => togglePermission(perm.name)}
+                          className="peer sr-only"
+                        />
+                        <div className="w-5 h-5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 peer-checked:bg-purple-600 peer-checked:border-purple-600 dark:peer-checked:bg-purple-500 dark:peer-checked:border-purple-500 transition-colors flex items-center justify-center">
+                          <svg className={`w-3.5 h-3.5 text-white ${form.permissions.includes(perm.name) ? 'opacity-100' : 'opacity-0'} transition-opacity`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{perm.label}</span>
-                      <span className="text-xs text-slate-400 font-mono">{perm.value}</span>
-                    </div>
-                  </label>
-                ))}
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{perm.name}</span>
+                        <span className="text-xs text-slate-400 font-mono">#{perm.id}</span>
+                      </div>
+                    </label>
+                  ))
+                )}
               </div>
             </Field>
           </form>

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createUser } from "../api";
-import { USER_ROLES } from "../types";
-import type { CreateUserPayload, UserRole } from "../types";
+import { fetchRoles } from "../../roles/api";
+import type { CreateUserPayload } from "../types";
 
 // ─── Field ───────────────────────────────────────────────────────────────────
 const Field = ({
@@ -35,7 +35,7 @@ const EMPTY_FORM: CreateUserPayload = {
   password: "",
   phone: "",
   is_active: true,
-  role: "client" as UserRole,
+  role: "",
 };
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -66,6 +66,13 @@ export default function CreateUserModal({
       onClose();
     },
   });
+
+  const { data: rolesData, isLoading: rolesLoading } = useQuery({
+    queryKey: ["roles"],
+    queryFn: fetchRoles,
+    staleTime: 5 * 60 * 1000,
+  });
+  const allRoles = rolesData?.data ?? [];
 
   const isPending = createMutation.isPending;
   const apiError = createMutation.error;
@@ -187,12 +194,20 @@ export default function CreateUserModal({
                 className={inputCls}
                 value={form.role}
                 onChange={(e) => set("role", e.target.value)}
+                disabled={rolesLoading}
               >
-                {USER_ROLES.map((r) => (
-                  <option key={r.value} value={r.value}>
-                    {r.label}
-                  </option>
-                ))}
+                {rolesLoading ? (
+                  <option>جاري التحميل...</option>
+                ) : (
+                  <>
+                    <option value="">اختر دوراً</option>
+                    {allRoles.map((r) => (
+                      <option key={r.id} value={r.name}>
+                        {r.name}
+                      </option>
+                    ))}
+                  </>
+                )}
               </select>
             </Field>
 

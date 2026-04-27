@@ -24,12 +24,7 @@ export interface CreateRolePayload {
 
 export type UpdateRolePayload = CreateRolePayload;
 
-// قائمة الصلاحيات المتاحة (يمكن جلبها من API لاحقاً إذا لزم الأمر)
-export const AVAILABLE_PERMISSIONS = [
-  { value: "manage-users", label: "إدارة المستخدمين" },
-  { value: "view-users", label: "عرض المستخدمين" },
-  { value: "manage-roles", label: "إدارة الأدوار" },
-  { value: "view-roles", label: "عرض الأدوار" },
-  { value: "manage-permissions", label: "إدارة الصلاحيات" },
-  { value: "view-permissions", label: "عرض الصلاحيات" },
-];
+// payload خاص بتحديث الصلاحيات فقط بدون الاسم
+export interface UpdateRolePermissionsPayload {
+  permissions: string[];
+}

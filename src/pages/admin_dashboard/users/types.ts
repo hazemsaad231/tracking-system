@@ -1,12 +1,5 @@
-export const USER_ROLES = [
-  { value: "admin",      label: "مسؤول" },
-  { value: "writer",     label: "كاتب" },
-  { value: "client",     label: "عميل" },
-  { value: "accountant", label: "محاسب" },
-  { value: "reviewer",   label: "مراجع" },
-] as const;
-
-export type UserRole = typeof USER_ROLES[number]["value"];
+// الأدوار بتجي الآن ديناميكياً من الـ API عبر roles/api.ts
+export type UserRole = string;
 
 export interface User {
   id: number;
@@ -25,7 +18,7 @@ export interface CreateUserPayload {
   password: string;
   phone: string;
   is_active: boolean;
-  role: UserRole;
+  role: string;
 }
 
 export type UpdateUserPayload = Partial<Omit<CreateUserPayload, "password">> & {

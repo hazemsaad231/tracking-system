@@ -1,5 +1,5 @@
 import apiClient from "@/api/axios";
-import type { RolesApiResponse, RoleDetailResponse, Role, CreateRolePayload, UpdateRolePayload } from "./types";
+import type { RolesApiResponse, RoleDetailResponse, Role, CreateRolePayload, UpdateRolePayload, UpdateRolePermissionsPayload } from "./types";
 
 export const fetchRoles = async (): Promise<RolesApiResponse> => {
   const { data } = await apiClient.get<RolesApiResponse>("/roles");
@@ -17,6 +17,11 @@ export const createRole = async (payload: CreateRolePayload): Promise<Role> => {
 };
 
 export const updateRole = async (id: number, payload: UpdateRolePayload): Promise<Role> => {
+  const { data } = await apiClient.put<RoleDetailResponse>(`/roles/${id}`, payload);
+  return data.data;
+};
+
+export const updateRolePermissions = async (id: number, payload: UpdateRolePermissionsPayload): Promise<Role> => {
   const { data } = await apiClient.put<RoleDetailResponse>(`/roles/${id}`, payload);
   return data.data;
 };

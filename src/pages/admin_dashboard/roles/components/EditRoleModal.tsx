@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateRole } from "../api";
-import { AVAILABLE_PERMISSIONS } from "../types";
-import type { Role, UpdateRolePayload } from "../types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { updateRolePermissions } from "../api";
+import { fetchPermissions } from "../../permissions/api";
+import type { Role, UpdateRolePermissionsPayload } from "../types";
 
 const Field = ({ label, children, error }: { label: string; children: React.ReactNode; error?: string }) => (
   <div className="flex flex-col gap-1.5">
@@ -12,30 +12,23 @@ const Field = ({ label, children, error }: { label: string; children: React.Reac
   </div>
 );
 
-const inputCls = `
-  w-full px-3 py-2 rounded-lg text-sm
-  bg-white border border-slate-200 text-slate-800 placeholder-slate-400
-  dark:bg-white/5 dark:border-white/10 dark:text-white dark:placeholder-slate-500
-  focus:outline-none focus:border-purple-400 dark:focus:border-purple-500
-  transition-colors
-`;
 
 export default function EditRoleModal({ role, onClose }: { role: Role | null; onClose: () => void }) {
   const queryClient = useQueryClient();
   const isOpen = !!role;
 
-  const [form, setForm] = useState<UpdateRolePayload>({ name: "", permissions: [] });
-  const [errors, setErrors] = useState<Partial<UpdateRolePayload>>({});
+  const [permissions, setPermissions] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (role) {
-      setForm({ name: role.name, permissions: role.permissions || [] });
-      setErrors({});
+      setPermissions(role.permissions || []);
+      setError(null);
     }
   }, [role]);
 
   const mutation = useMutation({
-    mutationFn: (payload: UpdateRolePayload) => updateRole(role!.id, payload),
+    mutationFn: (payload: UpdateRolePermissionsPayload) => updateRolePermissions(role!.id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["roles"] });
       queryClient.invalidateQueries({ queryKey: ["role", role!.id] });
@@ -43,33 +36,37 @@ export default function EditRoleModal({ role, onClose }: { role: Role | null; on
     },
   });
 
+  const { data: permissionsData, isLoading: permissionsLoading } = useQuery({
+    queryKey: ["permissions"],
+    queryFn: fetchPermissions,
+    staleTime: 5 * 60 * 1000,
+  });
+  const allPermissions = permissionsData?.data ?? [];
+
   const isPending = mutation.isPending;
   const apiError = mutation.error;
 
   const validate = () => {
-    const errs: Partial<UpdateRolePayload> = {};
-    if (!form.name.trim()) errs.name = "اسم الدور مطلوب";
-    if (form.permissions.length === 0) errs.permissions = "يجب اختيار صلاحية واحدة على الأقل" as any;
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
+    if (permissions.length === 0) {
+      setError("يجب اختيار صلاحية واحدة على الأقل");
+      return false;
+    }
+    setError(null);
+    return true;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate() || !role) return;
-    mutation.mutate(form);
+    mutation.mutate({ permissions });
   };
 
   const togglePermission = (permValue: string) => {
-    setForm((prev) => {
-      const isSelected = prev.permissions.includes(permValue);
-      return {
-        ...prev,
-        permissions: isSelected
-          ? prev.permissions.filter((p) => p !== permValue)
-          : [...prev.permissions, permValue],
-      };
-    });
+    setPermissions((prev) =>
+      prev.includes(permValue)
+        ? prev.filter((p) => p !== permValue)
+        : [...prev, permValue]
+    );
   };
 
   return (
@@ -93,7 +90,10 @@ export default function EditRoleModal({ role, onClose }: { role: Role | null; on
         <div className="w-full max-w-md rounded-2xl shadow-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 flex flex-col max-h-[90vh]">
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-white/10 shrink-0">
-            <h2 className="text-base font-semibold text-slate-800 dark:text-white">تعديل الدور</h2>
+            <div dir="rtl">
+              <h2 className="text-base font-semibold text-slate-800 dark:text-white">تعديل صلاحيات الدور</h2>
+              <p className="text-xs text-slate-400 mt-0.5">{role?.name}</p>
+            </div>
             <button
               type="button"
               onClick={onClose}
@@ -123,41 +123,38 @@ export default function EditRoleModal({ role, onClose }: { role: Role | null; on
               </div>
             )}
 
-            <Field label="اسم الدور" error={errors.name}>
-              <input
-                className={inputCls}
-                placeholder="مثال: مدير المبيعات"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-              />
-            </Field>
-
-            <Field label="الصلاحيات الممنوحة" error={errors.permissions as unknown as string}>
+            <Field label="الصلاحيات الممنوحة" error={error ?? undefined}>
               <div className="grid grid-cols-1 gap-2 mt-1">
-                {AVAILABLE_PERMISSIONS.map((perm) => (
-                  <label
-                    key={perm.value}
-                    className="flex items-center gap-3 p-2.5 rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/[0.02] hover:bg-slate-100 dark:hover:bg-white/[0.04] cursor-pointer transition-colors"
-                  >
-                    <div className="relative flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={form.permissions.includes(perm.value)}
-                        onChange={() => togglePermission(perm.value)}
-                        className="peer sr-only"
-                      />
-                      <div className="w-5 h-5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 peer-checked:bg-purple-600 peer-checked:border-purple-600 dark:peer-checked:bg-purple-500 dark:peer-checked:border-purple-500 transition-colors flex items-center justify-center">
-                        <svg className={`w-3.5 h-3.5 text-white ${form.permissions.includes(perm.value) ? 'opacity-100' : 'opacity-0'} transition-opacity`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
+                {permissionsLoading ? (
+                  Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="h-12 rounded-lg bg-slate-100 dark:bg-white/5 animate-pulse" />
+                  ))
+                ) : (
+                  allPermissions.map((perm) => (
+                    <label
+                      key={perm.id}
+                      className="flex items-center gap-3 p-2.5 rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/[0.02] hover:bg-slate-100 dark:hover:bg-white/[0.04] cursor-pointer transition-colors"
+                    >
+                      <div className="relative flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={permissions.includes(perm.name)}
+                          onChange={() => togglePermission(perm.name)}
+                          className="peer sr-only"
+                        />
+                        <div className="w-5 h-5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 peer-checked:bg-purple-600 peer-checked:border-purple-600 dark:peer-checked:bg-purple-500 dark:peer-checked:border-purple-500 transition-colors flex items-center justify-center">
+                          <svg className={`w-3.5 h-3.5 text-white ${permissions.includes(perm.name) ? 'opacity-100' : 'opacity-0'} transition-opacity`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{perm.label}</span>
-                      <span className="text-xs text-slate-400 font-mono">{perm.value}</span>
-                    </div>
-                  </label>
-                ))}
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{perm.name}</span>
+                        <span className="text-xs text-slate-400 font-mono">#{perm.id}</span>
+                      </div>
+                    </label>
+                  ))
+                )}
               </div>
             </Field>
           </form>

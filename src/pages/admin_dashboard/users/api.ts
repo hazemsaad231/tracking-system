@@ -1,6 +1,4 @@
 import apiClient from "@/api/axios";
-
-
 import type { ApiResponse, User, UserDetailResponse, CreateUserPayload, UpdateUserPayload } from "./types";
 
 export const fetchUsers = async (): Promise<ApiResponse> => {
