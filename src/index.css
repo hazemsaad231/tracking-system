@@ -107,3 +107,43 @@ body {
   --card-bg: #1e293b;
   --border-color: #334155;
 }
+
+/* ─── Custom Scrollbar ─────────────────────────────────────────────────────── */
+/* Webkit (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;          /* slate-300 - light mode */
+  border-radius: 999px;
+  transition: background 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a78bfa;          /* purple-400 */
+}
+
+/* Dark Mode Scrollbar */
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;          /* slate-700 */
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #7c3aed;          /* purple-600 */
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.dark * {
+  scrollbar-color: #334155 transparent;
+}

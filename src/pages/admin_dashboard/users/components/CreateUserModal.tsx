@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createUser } from "../api";
 import { fetchRoles } from "../../roles/api";
 import type { CreateUserPayload } from "../types";
 
-// ─── Field ───────────────────────────────────────────────────────────────────
+// ─── Field Wrapper ───────────────────────────────────────────────────────────
 const Field = ({
   label,
   children,
@@ -29,6 +29,122 @@ const inputCls = `
   transition-colors
 `;
 
+// ─── Custom Select Dropdown ──────────────────────────────────────────────────
+interface SelectOption { label: string; value: string }
+
+const CustomSelect = ({
+  options,
+  value,
+  onChange,
+  placeholder = "اختر...",
+  isLoading,
+}: {
+  options: SelectOption[];
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  isLoading?: boolean;
+}) => {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // إغلاق عند الضغط خارج الـ dropdown
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const selected = options.find((o) => o.value === value);
+
+  return (
+    <div ref={ref} className="relative w-full">
+      {/* Trigger Button */}
+      <button
+        type="button"
+        onClick={() => !isLoading && setOpen((p) => !p)}
+        disabled={isLoading}
+        className={`
+          w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm text-right
+          bg-white border border-slate-200
+          dark:bg-white/5 dark:border-white/10
+          hover:border-purple-400 dark:hover:border-purple-500
+          focus:outline-none focus:border-purple-400 dark:focus:border-purple-500
+          transition-colors disabled:opacity-60 disabled:cursor-not-allowed
+          ${open ? "border-purple-400 dark:border-purple-500" : ""}
+        `}
+      >
+        <span className={selected ? "text-slate-800 dark:text-white" : "text-slate-400 dark:text-slate-500"}>
+          {isLoading ? "جاري التحميل..." : selected?.label ?? placeholder}
+        </span>
+        <svg
+          className={`w-4 h-4 text-slate-400 dark:text-slate-500 shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {/* Dropdown Panel */}
+      <div
+        className={`
+          absolute z-50 w-full mt-1 rounded-xl overflow-hidden
+          bg-white dark:bg-slate-800
+          border border-slate-200 dark:border-white/10
+          shadow-xl shadow-black/10 dark:shadow-black/40
+          transition-all duration-200 origin-top
+          ${open ? "opacity-100 scale-y-100 pointer-events-auto" : "opacity-0 scale-y-95 pointer-events-none"}
+        `}
+      >
+        {/* Placeholder option */}
+        <button
+          type="button"
+          onClick={() => { onChange(""); setOpen(false); }}
+          className={`
+            w-full text-right px-4 py-2.5 text-sm transition-colors
+            text-slate-400 dark:text-slate-500 italic
+            hover:bg-slate-50 dark:hover:bg-white/5
+          `}
+        >
+          {placeholder}
+        </button>
+
+        {/* Divider */}
+        <div className="h-px bg-slate-100 dark:bg-white/5" />
+
+        {/* Options */}
+        <div className="max-h-48 overflow-y-auto">
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => { onChange(opt.value); setOpen(false); }}
+              className={`
+                w-full text-right px-4 py-2.5 text-sm flex items-center justify-between gap-2
+                transition-colors duration-150
+                ${value === opt.value
+                  ? "bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-300"
+                  : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5"
+                }
+              `}
+            >
+              <span>{opt.label}</span>
+              {value === opt.value && (
+                <svg className="w-4 h-4 text-purple-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                </svg>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── Constants ───────────────────────────────────────────────────────────────
 const EMPTY_FORM: CreateUserPayload = {
   name: "",
   email: "",
@@ -51,7 +167,6 @@ export default function CreateUserModal({
   const [form, setForm] = useState<CreateUserPayload>(EMPTY_FORM);
   const [errors, setErrors] = useState<Partial<CreateUserPayload>>({});
 
-  // Reset form when modal opens
   useEffect(() => {
     if (isOpen) {
       setForm(EMPTY_FORM);
@@ -72,7 +187,11 @@ export default function CreateUserModal({
     queryFn: fetchRoles,
     staleTime: 5 * 60 * 1000,
   });
-  const allRoles = rolesData?.data ?? [];
+
+  const roleOptions: SelectOption[] = (rolesData?.data ?? []).map((r) => ({
+    label: r.name,
+    value: r.name,
+  }));
 
   const isPending = createMutation.isPending;
   const apiError = createMutation.error;
@@ -98,6 +217,7 @@ export default function CreateUserModal({
 
   return (
     <>
+      {/* Backdrop */}
       <div
         onClick={!isPending ? onClose : undefined}
         className={`fixed inset-0 z-50 transition-opacity duration-300 ${
@@ -107,6 +227,7 @@ export default function CreateUserModal({
         }`}
       />
 
+      {/* Modal */}
       <div
         dir="rtl"
         role="dialog"
@@ -117,16 +238,15 @@ export default function CreateUserModal({
         `}
       >
         <div className="w-full max-w-md rounded-2xl shadow-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 flex flex-col max-h-[90vh]">
+
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-white/10 shrink-0">
-            <h2 className="text-base font-semibold text-slate-800 dark:text-white">
-              إضافة مستخدم جديد
-            </h2>
+            <h2 className="text-base font-semibold text-slate-800 dark:text-white">إضافة مستخدم جديد</h2>
             <button
               type="button"
               onClick={onClose}
               disabled={isPending}
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors disabled:opacity-50"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -136,6 +256,7 @@ export default function CreateUserModal({
 
           {/* Form */}
           <form id="createUserForm" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-5 space-y-4">
+            {/* API Error */}
             {apiError && (
               <div className="p-3 rounded-lg bg-red-50 border border-red-200 dark:bg-red-500/10 dark:border-red-500/30">
                 <p className="text-xs text-red-600 dark:text-red-400 font-semibold mb-1">
@@ -152,65 +273,33 @@ export default function CreateUserModal({
             )}
 
             <Field label="الاسم الكامل" error={errors.name}>
-              <input
-                className={inputCls}
-                placeholder="أدخل الاسم الكامل"
-                value={form.name}
-                onChange={(e) => set("name", e.target.value)}
-              />
+              <input className={inputCls} placeholder="أدخل الاسم الكامل" value={form.name} onChange={(e) => set("name", e.target.value)} />
             </Field>
 
             <Field label="البريد الإلكتروني" error={errors.email}>
-              <input
-                type="email"
-                className={inputCls}
-                placeholder="example@domain.com"
-                value={form.email}
-                onChange={(e) => set("email", e.target.value)}
-              />
+              <input type="email" className={inputCls} placeholder="example@domain.com" value={form.email} onChange={(e) => set("email", e.target.value)} />
             </Field>
 
             <Field label="كلمة المرور" error={errors.password}>
-              <input
-                type="password"
-                className={inputCls}
-                placeholder="أدخل كلمة المرور"
-                value={form.password}
-                onChange={(e) => set("password", e.target.value)}
-              />
+              <input type="password" className={inputCls} placeholder="أدخل كلمة المرور" value={form.password} onChange={(e) => set("password", e.target.value)} />
             </Field>
 
             <Field label="رقم الهاتف" error={errors.phone}>
-              <input
-                className={inputCls}
-                placeholder="05xxxxxxxx"
-                value={form.phone}
-                onChange={(e) => set("phone", e.target.value)}
+              <input className={inputCls} placeholder="05xxxxxxxx" value={form.phone} onChange={(e) => set("phone", e.target.value)} />
+            </Field>
+
+            {/* Custom Role Dropdown */}
+            <Field label="الدور">
+              <CustomSelect
+                options={roleOptions}
+                value={form.role}
+                onChange={(v) => set("role", v)}
+                placeholder="اختر دوراً"
+                isLoading={rolesLoading}
               />
             </Field>
 
-            <Field label="الدور">
-              <select
-                className={inputCls}
-                value={form.role}
-                onChange={(e) => set("role", e.target.value)}
-                disabled={rolesLoading}
-              >
-                {rolesLoading ? (
-                  <option>جاري التحميل...</option>
-                ) : (
-                  <>
-                    <option value="">اختر دوراً</option>
-                    {allRoles.map((r) => (
-                      <option key={r.id} value={r.name}>
-                        {r.name}
-                      </option>
-                    ))}
-                  </>
-                )}
-              </select>
-            </Field>
-
+            {/* Status Toggle */}
             <Field label="الحالة">
               <div className="flex items-center gap-3">
                 <button
@@ -239,7 +328,7 @@ export default function CreateUserModal({
               type="button"
               onClick={onClose}
               disabled={isPending}
-              className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-slate-400"
+              className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors disabled:opacity-50"
             >
               إلغاء
             </button>
@@ -247,7 +336,7 @@ export default function CreateUserModal({
               type="submit"
               form="createUserForm"
               disabled={isPending}
-              className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 transition-colors disabled:opacity-60 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
+              className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
             >
               {isPending ? (
                 <>
