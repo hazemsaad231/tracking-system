@@ -10,6 +10,8 @@ import DashboardLayout from './components/layout/DashboardLayout';
 import Users from './pages/admin_dashboard/users/Users';
 import Roles from './pages/admin_dashboard/roles/Roles';
 import Permissions from './pages/admin_dashboard/permissions/Permissions';
+import Categories from './pages/admin_dashboard/categories/Categories';
+import CategoryFiles from './pages/admin_dashboard/categories_files/CategoryFiles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './pages/auth/ProtectedRoute';
@@ -50,6 +52,8 @@ function App() {
           <Route path="users" element={<Users />} />
           <Route path="roles" element={<Roles />} />
           <Route path="permissions" element={<Permissions />} />
+          <Route path="categories" element={<Categories />} />
+          <Route path="categories/:categoryId/files" element={<CategoryFiles />} />
           <Route path='accountant' element={<AccountantDashboard />} />
           <Route path='reviewer' element={<ReviewerDashboard />} />
           <Route path='writer' element={<WriterDashboard />} />

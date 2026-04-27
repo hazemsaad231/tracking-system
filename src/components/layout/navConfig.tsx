@@ -1,5 +1,5 @@
 // navConfig.tsx أو في نفس الملف فوق
-import { House, Users, Shield, Wrench} from 'lucide-react';
+import { House, Users, Shield, Wrench, Layers} from 'lucide-react';
 import type { UserRole } from '../../context/AuthContext';
 import type { JSX } from 'react';
 
@@ -12,6 +12,7 @@ const NAVIGATION_MAP: Record<UserRole, { label: string; items: { label: string; 
       { label: 'المستخدمين', icon: <Users size={18} />, path: '/dashboard/users' },
       { label: 'الأدوار', icon: <Shield size={18} />, path: '/dashboard/roles' },
       { label: 'الصلاحيات', icon: <Shield size={18} />, path: '/dashboard/permissions' },
+      { label: 'الفئات', icon: <Layers size={18} />, path: '/dashboard/categories' },
       { label: 'الإعدادات', icon: <Wrench size={18} />, path: '/dashboard/settings' },
     ]
   },
