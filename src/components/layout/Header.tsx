@@ -34,7 +34,7 @@ const Header: React.FC = () => {
             <span>{today}</span>
           </div>
           <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900 dark:text-white truncate">{currentPage.title}</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5 hidden sm:block truncate">{currentPage.subtitle}</p>
+          <p className="text-sm  text-slate-500 dark:text-slate-400 mt-0.5 hidden sm:block truncate">{currentPage.subtitle}</p>
         </div>
 
         {/* Actions */}

@@ -23,7 +23,7 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate('/login');
     localStorage.removeItem('token');
     sessionStorage.removeItem('onboarding_skipped');
   };
@@ -64,7 +64,7 @@ const Sidebar = () => {
         <button
           onClick={() => setCollapsed(!collapsed)}
           aria-label={collapsed ? "فتح القائمة" : "تصغير القائمة"}
-          className={`absolute top-1/2 -translate-y-1/2 -left-4 z-50
+          className={`absolute top-12 -translate-y-1/2 -left-4 z-50
             hidden lg:flex items-center justify-center
             w-8 h-8 rounded-full
             bg-white border border-slate-200
@@ -77,7 +77,7 @@ const Sidebar = () => {
         
 
         {/* Logo + Collapse button */}
-        <div className="flex items-center justify-center relative py-6 pb-4">
+        <div className="flex items-center justify-between px-2 relative py-6 pb-4">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-10 h-10 shrink-0">
               <img src={smallLogo} alt="Logo" className="w-full h-full object-cover rounded-xl" />
@@ -98,7 +98,7 @@ const Sidebar = () => {
           </button>
         </div>
 
-        <div className="w-2/3 m-auto h-px bg-slate-500" />
+        <div className="w-2/3 mx-3 h-px bg-slate-500" />
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto pl-6 py-3 space-y-5 scrollbar-thin scrollbar-thumb-slate-700/50 scrollbar-track-transparent">
@@ -113,7 +113,7 @@ const Sidebar = () => {
                         <Link
                           to={item.path}
                           onClick={() => setMobileOpen(false)}
-                          className={`group flex justify-center items-center gap-3 py-4 rounded-l-full text-[13px] font-medium transition-all duration-200 relative
+                          className={`group flex justify-start  items-center gap-3 py-4 rounded-l-full text-[13px] font-medium transition-all duration-200 relative
                             ${collapsed ? 'px-2' : 'px-4'}
                             ${isActive
                               ? 'bg-white text-[--one-color]'
@@ -137,7 +137,7 @@ const Sidebar = () => {
                         </Link>
                       </div>
                       {index < section.items.length - 1 && (
-                        <div className="w-2/3 m-auto h-px my-3 bg-slate-500" />
+                        <div className="w-2/3 mx-3 h-px my-3 bg-slate-500" />
                       )}
                     </div>
                   );

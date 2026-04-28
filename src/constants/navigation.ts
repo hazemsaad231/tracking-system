@@ -117,5 +117,5 @@ export const PAGE_TITLES: Record<string, PageMeta> = {
 /* ─── العنوان الافتراضي ─── */
 export const DEFAULT_PAGE_META: PageMeta = {
   title: 'لوحة التحكم',
-  subtitle: 'مرحباً بك في لوحة تحكم المسؤول',
+  subtitle: 'مرحباً بك',
 };
