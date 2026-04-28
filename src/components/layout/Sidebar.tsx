@@ -57,7 +57,7 @@ const Sidebar = () => {
           ${mobileOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
           ${collapsed ? 'lg:w-[72px]' : 'lg:w-[272px]'}
           w-[272px]`}
-        style={{ background: 'linear-gradient(180deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)' }}
+        style={{ background: 'var(--one-color)' }}
       >
         {/* Floating open tab — visible only when collapsed on desktop */}
         <button
