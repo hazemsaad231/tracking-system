@@ -26,12 +26,12 @@ const Login = () => {
 
     return (
         <div
-            className="flex min-h-screen items-center justify-center w-full relative overflow-hidden px-4 bg-[--one-color]"
+            className="flex min-h-screen items-center justify-center w-full relative overflow-hidden bg-[--one-color]"
         >
             {/* تأثيرات بصرية للخلفية */}
-            <div className="absolute top-[-15%] right-[-10%] w-[400px] h-[400px] bg-violet-600/10 dark:bg-violet-600/20 blur-[120px] rounded-full pointer-events-none" />
+            {/* <div className="absolute top-[-15%] right-[-10%] w-[400px] h-[400px] bg-violet-600/10 dark:bg-violet-600/20 blur-[120px] rounded-full pointer-events-none" />
             <div className="absolute bottom-[-15%] left-[-10%] w-[350px] h-[350px] bg-blue-600/10 dark:bg-blue-600/15 blur-[120px] rounded-full pointer-events-none" />
-            <div className="absolute top-[40%] left-[30%] w-[200px] h-[200px] bg-violet-500/5 dark:bg-violet-500/10 blur-[80px] rounded-full pointer-events-none" />
+            <div className="absolute top-[40%] left-[30%] w-[200px] h-[200px] bg-violet-500/5 dark:bg-violet-500/10 blur-[80px] rounded-full pointer-events-none" /> */}
 
             <div className="flex flex-col gap-5 justify-center items-center w-full relative z-10">
                 {/* اللوجو */}
@@ -40,7 +40,7 @@ const Login = () => {
                 </div>
 
                 {/* الكارد */}
-                <div className=" p-4">
+                <div className="p-2">
                     {/* العنوان */}
                     <div className="text-center mb-7">
                         <h1 className="text-2xl font-bold text-white mb-2">تسجيل الدخول</h1>
@@ -124,7 +124,7 @@ const Login = () => {
                                 >
                                     نسيت كلمة المرور؟
                                 </Link>
-                                
+
                                 {/* ذكرني */}
                                 <label className="flex items-center gap-2 cursor-pointer select-none">
                                    
