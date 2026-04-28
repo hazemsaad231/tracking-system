@@ -25,7 +25,7 @@ const Header: React.FC = () => {
   });
 
   return (
-    <header className="sticky top-0 z-30 backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-b border-slate-200/80 dark:border-slate-700/50">
+    <header className="sticky top-0 z-10 backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-b border-slate-200/80 dark:border-slate-700/50">
       <div className="flex items-center justify-between px-4 sm:px-6 py-3">
         {/* Page Title & Date */}
         <div className="flex-1 min-w-0">

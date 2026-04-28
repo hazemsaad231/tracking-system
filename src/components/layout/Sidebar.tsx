@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LogOut, Shield, Menu, X, ChevronRight, ChevronLeft } from 'lucide-react';
+import { LogOut, Menu, X, ChevronRight, Play } from 'lucide-react';
 import { useAuthContext } from '../../context/AuthContext';
 import NAVIGATION_MAP from './navConfig';
+import smallLogo from '../../assets/small.png';
 
 const Sidebar = () => {
 
@@ -53,36 +54,33 @@ const Sidebar = () => {
       {/* Sidebar */}
       <aside
         className={`fixed lg:sticky top-0 right-0 h-screen z-50 lg:z-auto flex flex-col overflow-visible
-          transition-all duration-300 ease-in-out
+          transition-all duration-300 ease-in-out rounded-l-2xl shadow-lg shadow-violet-500/30
           ${mobileOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
-          ${collapsed ? 'lg:w-[72px]' : 'lg:w-[272px]'}
-          w-[272px]`}
+          ${collapsed ? 'lg:w-[72px]' : 'lg:w-[250px]'}
+          w-[250px]`}
         style={{ background: 'var(--one-color)' }}
       >
-        {/* Floating open tab — visible only when collapsed on desktop */}
+        {/* Combined Collapse/Expand Toggle Button */}
         <button
-          onClick={() => setCollapsed(false)}
-          aria-label="فتح القائمة"
-          className={`absolute top-1/2 -translate-y-1/2 -left-[18px] z-50
-            hidden lg:flex flex-col items-center justify-center
-            w-[18px] h-16 rounded-l-xl
-            bg-gradient-to-b from-violet-600 to-blue-600
-            shadow-lg shadow-violet-500/40
+          onClick={() => setCollapsed(!collapsed)}
+          aria-label={collapsed ? "فتح القائمة" : "تصغير القائمة"}
+          className={`absolute top-1/2 -translate-y-1/2 -left-4 z-50
+            hidden lg:flex items-center justify-center
+            w-8 h-8 rounded-full
+            bg-white border border-slate-200
+            shadow-lg
             transition-all duration-300 ease-in-out
-            hover:w-[22px] hover:-left-[22px]
-            ${collapsed ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+            hover:bg-slate-50 hover:-left-5 group`}
         >
-          <ChevronLeft size={12} className="text-white" />
+          <Play size={16} className={`text-slate-600 transition-transform duration-300 ${collapsed ? 'rotate-180' : 'rotate-0'}`} />
         </button>
-        {/* Decorative orbs */}
-        <div className="absolute top-20 -left-10 w-40 h-40 bg-violet-500/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-20 -right-10 w-32 h-32 bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
+        
 
         {/* Logo + Collapse button */}
-        <div className="flex items-center justify-between relative p-5 pb-4">
+        <div className="flex items-center justify-center relative py-6 pb-4">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center shadow-lg shadow-violet-500/30">
-              <Shield size={22} className="text-white" />
+            <div className="w-10 h-10 shrink-0">
+              <img src={smallLogo} alt="Logo" className="w-full h-full object-cover rounded-xl" />
             </div>
             <div className={`transition-all duration-300 overflow-hidden ${collapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
               <h2 className="text-white font-bold text-lg tracking-tight whitespace-nowrap">نظام التتبع</h2>
@@ -90,72 +88,56 @@ const Sidebar = () => {
             </div>
           </div>
 
-          {/* Desktop collapse toggle — only shown when expanded */}
-          <button
-            onClick={() => setCollapsed(true)}
-            className={`hidden lg:flex w-8 h-8 shrink-0 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-slate-400 hover:text-white transition-all duration-200
-              ${collapsed ? 'opacity-0 pointer-events-none w-0' : 'opacity-100'}`}
-            aria-label="تصغير القائمة"
-          >
-            <ChevronRight size={16} />
-          </button>
-
           {/* Mobile close button */}
           <button
             onClick={() => setMobileOpen(false)}
-            className="lg:hidden w-10 h-10 bg-white/10 backdrop-blur-md flex items-center justify-center rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-all duration-200"
+            className="lg:hidden w-10 h-10 bg-white flex items-center justify-center rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-all duration-200"
             aria-label="إغلاق القائمة"
           >
             <X size={20} />
           </button>
         </div>
 
-        <div className="mx-5 h-px bg-gradient-to-l from-transparent via-slate-600/50 to-transparent" />
+        <div className="w-2/3 m-auto h-px bg-slate-500" />
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-3 space-y-5 scrollbar-thin">
+        <nav className="flex-1 overflow-y-auto pl-6 py-3 space-y-5 scrollbar-thin scrollbar-thumb-slate-700/50 scrollbar-track-transparent">
           {navSections.map((section, sIdx) => (
             <div key={sIdx}>
               <div className="space-y-0.5">
-                {section.items.map((item) => {
+                {section.items.map((item, index) => {
                   const isActive = location.pathname === item.path;
                   return (
-                    <div key={item.path} className="relative group/tooltip">
-                      <Link
-                        to={item.path}
-                        onClick={() => setMobileOpen(false)}
-                        className={`group flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 relative overflow-hidden
-                          ${collapsed ? 'justify-center px-2' : ''}
-                          ${isActive
-                            ? 'bg-gradient-to-l from-violet-600/30 to-blue-600/20 text-white shadow-lg shadow-violet-500/10 border border-violet-500/20'
-                            : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
-                          }`}
-                      >
-                        {isActive && !collapsed && (
-                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-gradient-to-b from-violet-400 to-blue-500 rounded-full" />
-                        )}
-                        <span className={`shrink-0 transition-colors duration-200 ${isActive ? 'text-violet-400' : 'text-slate-500 group-hover:text-violet-400'}`}>
-                          {item.icon}
-                        </span>
-                        <span className={`flex-1 whitespace-nowrap transition-all duration-300 overflow-hidden ${collapsed ? 'w-0 opacity-0 hidden' : 'opacity-100'}`}>
-                          {item.label}
-                        </span>
-                        {!collapsed && (
-                          <ChevronRight size={14} className={`transition-all duration-200 ${
-                            isActive ? 'text-violet-400 opacity-100' : 'opacity-0 translate-x-2 group-hover:opacity-50 group-hover:translate-x-0'
-                          }`} />
-                        )}
-                      </Link>
-
-                      {/* Tooltip on collapsed */}
-                      {collapsed && (
-                        <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 z-50
-                          opacity-0 group-hover/tooltip:opacity-100 pointer-events-none
-                          transition-opacity duration-200">
-                          <div className="bg-slate-800 border border-slate-700 text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap shadow-xl">
+                    <div key={item.path}>
+                      <div className="relative">
+                        <Link
+                          to={item.path}
+                          onClick={() => setMobileOpen(false)}
+                          className={`group flex justify-center items-center gap-3 py-4 rounded-l-full text-[13px] font-medium transition-all duration-200 relative
+                            ${collapsed ? 'px-2' : 'px-4'}
+                            ${isActive
+                              ? 'bg-white text-[--one-color]'
+                              : 'text-slate-100 hover:text-white hover:bg-white/5'
+                            }`}
+                        >
+                          {isActive && (
+                            <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-1.5 h-14 bg-white rounded-full" />
+                          )}
+                          <span className={`shrink-0 transition-colors duration-200 ${isActive ? 'text-[--one-color]' : 'text-slate-300 group-hover:text-slate-300'}`}>
+                            {item.icon}
+                          </span>
+                          <span className={`whitespace-nowrap transition-all duration-300 overflow-hidden ${collapsed ? 'w-0 opacity-0 hidden' : 'opacity-100'}`}>
                             {item.label}
-                          </div>
-                        </div>
+                          </span>
+                          {!collapsed && (
+                            <ChevronRight size={14} className={`transition-all duration-200 ${
+                              isActive ? 'text-white opacity-100' : 'opacity-0 translate-x-2 group-hover:opacity-50 group-hover:translate-x-0'
+                            }`} />
+                          )}
+                        </Link>
+                      </div>
+                      {index < section.items.length - 1 && (
+                        <div className="w-2/3 m-auto h-px my-3 bg-slate-500" />
                       )}
                     </div>
                   );
