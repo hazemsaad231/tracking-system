@@ -92,6 +92,10 @@ export const PAGE_TITLES: Record<string, PageMeta> = {
     title: 'إدارة الصلاحيات',
     subtitle: 'متابعة وإدارة جميع الصلاحيات',
   },
+  '/dashboard/categories': {
+    title: 'إدارة الفئات',
+    subtitle: 'متابعة وإدارة جميع الفئات',
+  },
   '/dashboard/tracking': {
     title: 'التتبع المباشر',
     subtitle: 'تتبع الموظفين والعملاء في الوقت الحقيقي',

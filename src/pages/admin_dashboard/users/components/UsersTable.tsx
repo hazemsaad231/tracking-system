@@ -156,7 +156,7 @@ const UsersTable = ({
 
       {/* Footer */}
       {meta && (
-        <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 bg-slate-50 dark:border-white/10 dark:bg-white/[0.02]">
+        <div className="flex items-center justify-between px-6 py-4 bg-slate-50 border-slate-200/80 rounded-b-xl dark:border-white/10 dark:bg-white/[0.02]">
           <p className="text-xs text-slate-500 dark:text-slate-500">
             الصفحة {meta.current_page} من {meta.last_page}
           </p>
