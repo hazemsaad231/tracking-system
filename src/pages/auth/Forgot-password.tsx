@@ -80,7 +80,7 @@ const ForgotPassword = () => {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="bg-[--two-color] hover:bg-[--two-color/80] w-full md:w-[400px] py-3.5 mt-2 text-sm font-bold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-[var(--two-color)/30] hover:-translate-y-0.5 active:translate-y-0"
+                                className="bg-[--two-color] hover:brightness-90 w-full md:w-[400px] py-3.5 mt-2 text-sm font-bold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 text-[--one-color]"
                             >
                                 {loading ? (
                                     <>
