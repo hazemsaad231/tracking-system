@@ -124,7 +124,6 @@ body {
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;          /* slate-300 - light mode */
   border-radius: 999px;
-  transition: background 0.2s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
