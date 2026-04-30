@@ -113,7 +113,7 @@ const UsersTable = ({
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50 dark:border-white/10 dark:bg-white/[0.03]">
               {COLUMNS.map((h, i) => (
-                <th key={i} className="px-6 py-4 text-xs font-semibold uppercase tracking-wider whitespace-nowrap text-slate-500 dark:text-slate-400">
+                <th key={i} className="px-6 py-8 text-xs font-semibold uppercase tracking-wider whitespace-nowrap text-slate-500 dark:text-slate-400">
                   {h}
                 </th>
               ))}
@@ -156,7 +156,7 @@ const UsersTable = ({
 
       {/* Footer */}
       {meta && (
-        <div className="flex items-center justify-between px-6 py-4 bg-slate-50 border-slate-200/80 rounded-b-xl dark:border-white/10 dark:bg-white/[0.02]">
+        <div className="flex items-center justify-between px-6 py-6 bg-slate-50 border-slate-200/80 rounded-b-xl dark:border-white/10 dark:bg-white/[0.02]">
           <p className="text-xs text-slate-500 dark:text-slate-500">
             الصفحة {meta.current_page} من {meta.last_page}
           </p>

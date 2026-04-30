@@ -17,6 +17,8 @@ const Sidebar = () => {
   const [showConfirm, setShowConfirm] = useState(false);
 
   const userRole = user?.role;
+  console.log("Sidebar Component Rendered. Current User:", user.role) // ✅ تحقق من بيانات المستخدم وصلاحياته في الهيدر
+
   if (!userRole) return null;
   const navConfig = NAVIGATION_MAP[userRole];
   const navItems = navConfig?.items || [];

@@ -26,21 +26,20 @@ const Login = () => {
 
     return (
         <AuthLayout>
-            <>
                 {/* العنوان */}
-                <div className="text-center mb-7">
-                    <h1 className="text-2xl font-bold text-white mb-2">تسجيل الدخول</h1>
-                    <p className="text-gray-200 text-sm w-60 m-auto">مرحباً بعودتك! أدخل بياناتك للوصول إلى لوحة التحكم</p>
+                <div className="text-center mb-6">
+                    <h1 className="text-2xl font-bold mb-2">تسجيل الدخول</h1>
+                    <p className="text-gray-600 text-sm w-60 m-auto">مرحباً بعودتك! أدخل بياناتك للوصول إلى لوحة التحكم</p>
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     {/* البريد الإلكتروني */}
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-white block">
+                        <label className="text-sm font-medium block">
                             البريد الإلكتروني
                         </label>
                         <div className="relative">
-                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-white pointer-events-none">
+                            <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
                                 <Mail size={18} className="text-gray-700" />
                             </div>
                             <input
@@ -52,7 +51,7 @@ const Login = () => {
                                         message: "يرجى إدخال بريد إلكتروني صحيح"
                                     }
                                 })}
-                                className={`w-full pl-10 py-3 text-sm bg-white border border-white  focus:ring-violet-500/30 focus:border-violet-500/60 rounded-xl focus:outline-none focus:ring-2 transition-all placeholder-slate-400 `}
+                                className={`w-full pl-10 py-3 text-sm bg-slate-100 border border-slate-200  focus:ring-violet-500/30 focus:border-violet-500/60 rounded-xl focus:outline-none focus:ring-2 transition-all placeholder-slate-400 `}
                                 placeholder="name@example.com"
                                 dir='ltr'
                             />
@@ -67,7 +66,7 @@ const Login = () => {
                     {/* كلمة المرور */}
                     <div className="space-y-2">
 
-                        <label className="text-sm font-medium text-white block">
+                        <label className="text-sm font-medium block">
                             كلمة المرور
                         </label>
 
@@ -84,7 +83,7 @@ const Login = () => {
                                         message: "كلمة المرور يجب أن تكون 6 أحرف على الأقل"
                                     }
                                 })}
-                                className={`w-full pr-11 pl-11 py-3 text-sm bg-white border border-white focus:ring-violet-500/30 focus:border-violet-500/60 rounded-xl focus:outline-none focus:ring-2 transition-all placeholder-slate-400`}
+                                className={`w-full pr-11 pl-11 py-3 text-sm bg-slate-100 border border-slate-200 focus:ring-violet-500/30 focus:border-violet-500/60 rounded-xl focus:outline-none focus:ring-2 transition-all placeholder-slate-400`}
                                 placeholder="••••••••"
                                 dir="ltr"
                             />
@@ -106,29 +105,28 @@ const Login = () => {
 
                             <Link
                                 to="/forgot-password"
-                                className="text-xs font-medium text-white transition-colors hover:text-white/80"
+                                className="text-xs font-medium"
                             >
                                 نسيت كلمة المرور؟
                             </Link>
 
                             {/* ذكرني */}
-                            <label className="flex items-center gap-2 cursor-pointer select-none">
-
-                                <div className="relative">
-                                    <input
-                                        type="checkbox"
-                                        id="remember-me"
-                                        className="sr-only peer"
-                                    />
-                                    <div className="w-4 h-4 bg-white/20 border-2 border-white/60 rounded peer-checked:bg-white peer-checked:border-white transition-all"></div>
-                                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity">
+                            {/* <label className="flex items-center gap-2 cursor-pointer select-none">
+                                <input
+                                    type="checkbox"
+                                    id="remember-me"
+                                    className="sr-only peer"
+                                />
+                                <div className="relative w-4 h-4">
+                                    <div className="w-full h-full bg-slate-200 border border-slate-300 rounded-sm transition-all duration-200 peer-checked:bg-[--one-color] peer-checked:border-[--one-color]"></div>
+                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 peer-checked:opacity-100 transition-opacity duration-200">
                                         <svg className="w-2.5 h-2.5 text-[--one-color]" fill="none" viewBox="0 0 12 10">
                                             <path d="M1 5l3.5 3.5L11 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                         </svg>
                                     </div>
                                 </div>
-                                <span className="text-xs font-medium text-white">ذكرني</span>
-                            </label>
+                                <span className="text-xs font-medium">ذكرني</span>
+                            </label> */}
 
 
                         </div>
@@ -136,7 +134,7 @@ const Login = () => {
 
 
                     {/* زر تسجيل الدخول */}
-                    <div className='!my-10'>
+                    <div className='!mt-8'>
                         <button
                             type="submit"
                             disabled={loading}
@@ -156,7 +154,6 @@ const Login = () => {
 
 
                 </form>
-            </>
         </AuthLayout>
     );
 };

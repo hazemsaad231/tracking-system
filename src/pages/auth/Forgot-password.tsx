@@ -34,14 +34,14 @@ const ForgotPassword = () => {
             <>
                 {/* العنوان */}
                 <div className="text-center mb-7">
-                    <h1 className="text-2xl font-bold text-white mb-2">نسيت كلمة المرور</h1>
-                    <p className="text-gray-200 text-sm w-60 m-auto">أدخل بريدك الإلكتروني وسنرسل لك رمز تحقق (OTP) لاستعادة حسابك</p>
+                    <h1 className="text-2xl font-bold mb-2">نسيت كلمة المرور</h1>
+                    <p className="text-gray-600 text-sm w-60 m-auto">أدخل بريدك الإلكتروني وسنرسل لك رمز تحقق (OTP) لاستعادة حسابك</p>
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                     {/* البريد الإلكتروني */}
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-white block">البريد الإلكتروني</label>
+                        <label className="text-sm font-medium block">البريد الإلكتروني</label>
                         <div className="relative">
                             <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
                                 <Mail size={18} className="text-gray-700" />
@@ -55,7 +55,7 @@ const ForgotPassword = () => {
                                         message: "يرجى إدخال بريد إلكتروني صحيح"
                                     }
                                 })}
-                                className={`${errors.email ? `${inputBase} ${inputError}` : inputBase}`}
+                                className={`w-full pl-10 py-3 text-sm bg-slate-100 border border-slate-200 focus:ring-violet-500/30 focus:border-violet-500/60 rounded-xl focus:outline-none focus:ring-2 transition-all placeholder-slate-400 `}
                                 placeholder="name@example.com"
                                 dir="ltr"
                             />
@@ -86,7 +86,7 @@ const ForgotPassword = () => {
                 <div className="mt-4 text-center">
                     <Link
                         to="/"
-                        className="inline-flex items-center gap-1.5 text-sm text-gray-200 hover:text-white transition-colors font-medium"
+                        className="inline-flex items-center gap-1.5 text-sm font-medium"
                     >
                         <ArrowRight size={14} />
                         العودة لتسجيل الدخول

@@ -32,24 +32,19 @@ const ResetPassword = () => {
         await resetPassword(data);
     };
 
-    /* ─── Helper: Input classes (same as Login) ─── */
-    const inputBase = 'w-full pl-10 py-3 text-sm bg-white border border-white focus:ring-violet-500/30 focus:border-violet-500/60 rounded-xl focus:outline-none focus:ring-2 transition-all placeholder-slate-400';
-    const inputError = 'border-red-500/60 focus:ring-red-500/30';
-    const inputWithEye = 'w-full pr-11 pl-11 py-3 text-sm bg-white border border-white focus:ring-violet-500/30 focus:border-violet-500/60 rounded-xl focus:outline-none focus:ring-2 transition-all placeholder-slate-400';
-
     return (
         <AuthLayout>
             <>
                 {/* العنوان */}
                 <div className="text-center mb-7">
-                    <h1 className="text-2xl font-bold text-white mb-2">تعيين كلمة المرور</h1>
-                    <p className="text-gray-200 text-sm w-60 m-auto">أدخل كلمة المرور الجديدة لحسابك</p>
+                    <h1 className="text-2xl font-bold mb-2">تعيين كلمة المرور</h1>
+                    <p className="text-gray-600 text-sm w-60 m-auto">أدخل كلمة المرور الجديدة لحسابك</p>
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                     {/* البريد الإلكتروني */}
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-white block">البريد الإلكتروني</label>
+                        <label className="text-sm font-medium block">البريد الإلكتروني</label>
                         <div className="relative">
                             <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
                                 <Mail size={18} className="text-gray-700" />
@@ -63,7 +58,7 @@ const ResetPassword = () => {
                                         message: "يرجى إدخال بريد إلكتروني صحيح"
                                     }
                                 })}
-                                className={`${errors.email ? `${inputBase} ${inputError}` : inputBase} ${urlEmail ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                className={`w-full pl-10 py-3 text-sm bg-slate-100 border border-slate-200  focus:ring-violet-500/30 focus:border-violet-500/60 rounded-xl focus:outline-none focus:ring-2 transition-all placeholder-slate-400 ${urlEmail ? 'opacity-60 cursor-not-allowed' : ''}`}
                                 placeholder="name@example.com"
                                 dir="ltr"
                                 readOnly={!!urlEmail}
@@ -74,7 +69,7 @@ const ResetPassword = () => {
 
                     {/* كلمة المرور الجديدة */}
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-white block">كلمة المرور الجديدة</label>
+                        <label className="text-sm font-medium block">كلمة المرور الجديدة</label>
                         <div className="relative">
                             <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
                                 <Lock size={18} className="text-gray-700" />
@@ -85,7 +80,7 @@ const ResetPassword = () => {
                                     required: "كلمة المرور مطلوبة",
                                     minLength: { value: 6, message: "كلمة المرور يجب أن تكون 6 أحرف على الأقل" }
                                 })}
-                                className={`${errors.password ? `${inputWithEye} ${inputError}` : inputWithEye}`}
+                                className={`w-full pr-11 pl-11 py-3 text-sm bg-slate-100 border border-slate-200 focus:ring-violet-500/30 focus:border-violet-500/60 rounded-xl focus:outline-none focus:ring-2 transition-all placeholder-slate-400`}
                                 placeholder="••••••••"
                                 dir="ltr"
                             />
@@ -103,7 +98,7 @@ const ResetPassword = () => {
 
                     {/* تأكيد كلمة المرور */}
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-white block">تأكيد كلمة المرور</label>
+                        <label className="text-sm font-medium block">تأكيد كلمة المرور</label>
                         <div className="relative">
                             <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
                                 <ShieldCheck size={18} className="text-gray-700" />
@@ -118,7 +113,7 @@ const ResetPassword = () => {
                                         }
                                     }
                                 })}
-                                className={`${errors.password_confirmation ? `${inputWithEye} ${inputError}` : inputWithEye}`}
+                                className={`w-full pr-11 pl-11 py-3 text-sm bg-slate-100 border border-slate-200 focus:ring-violet-500/30 focus:border-violet-500/60 rounded-xl focus:outline-none focus:ring-2 transition-all placeholder-slate-400`}
                                 placeholder="••••••••"
                                 dir="ltr"
                             />
@@ -137,7 +132,7 @@ const ResetPassword = () => {
                     {/* رمز التحقق */}
                     {!urlToken && (
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-white block">رمز التحقق (OTP)</label>
+                            <label className="text-sm font-medium block">رمز التحقق (OTP)</label>
                             <div className="relative">
                                 <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
                                     <Hash size={18} className="text-gray-700" />
@@ -145,7 +140,7 @@ const ResetPassword = () => {
                                 <input
                                     type="text"
                                     {...register("token", { required: "رمز التحقق مطلوب" })}
-                                    className={`${errors.token ? `${inputBase} ${inputError}` : inputBase}`}
+                                    className={`w-full pl-10 py-3 text-sm bg-slate-100 border border-slate-200  focus:ring-violet-500/30 focus:border-violet-500/60 rounded-xl focus:outline-none focus:ring-2 transition-all placeholder-slate-400`}
                                     placeholder="أدخل الرمز المرسل لك"
                                     dir="ltr"
                                 />
@@ -154,7 +149,7 @@ const ResetPassword = () => {
                         </div>
                     )}
 
-                    {/* زر التحديث */}
+                    {/* زر تعيين كلمة المرور */}
                     <div className="!my-10">
                         <button
                             type="submit"
@@ -164,10 +159,10 @@ const ResetPassword = () => {
                             {loading ? (
                                 <>
                                     <Loader2 size={18} className="animate-spin" />
-                                    جاري التحديث...
+                                    جاري التعيين...
                                 </>
                             ) : (
-                                'تحديث كلمة المرور'
+                                'تعيين كلمة المرور'
                             )}
                         </button>
                     </div>
@@ -177,7 +172,7 @@ const ResetPassword = () => {
                 <div className="mt-4 text-center">
                     <Link
                         to="/"
-                        className="inline-flex items-center gap-1.5 text-sm text-gray-200 hover:text-white transition-colors font-medium"
+                        className="inline-flex items-center gap-1.5 text-sm font-medium"
                     >
                         <ArrowRight size={14} />
                         العودة لتسجيل الدخول

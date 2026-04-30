@@ -93,7 +93,7 @@ const RolesTable = ({ roles, isLoading, onEdit, onDelete }: RolesTableProps) => 
       </div>
 
       {/* Desktop View - Table */}
-      <div className="hidden lg:block overflow-x-auto">
+      <div className="hidden lg:block overflow-x-auto py-5">
         <table className="w-full text-sm text-center">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50 dark:border-white/10 dark:bg-white/[0.03]">
