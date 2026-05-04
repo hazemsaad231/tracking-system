@@ -13,16 +13,23 @@ import {
 import type { UserRole } from '../../context/AuthContext';
 import type { JSX } from 'react';
 
-const NAVIGATION_MAP: Record<UserRole, { label: string; items: { label: string; icon: JSX.Element; path: string }[] }> = {
+const NAVIGATION_MAP: Record<UserRole, { label: string; items: { label: string; icon: JSX.Element; path: string; children?: { label: string; path: string }[] }[] }> = {
   admin: {
     label: 'المسؤول',
     items: [
       { label: 'الرئيسية',     icon: <LayoutDashboard size={18} />, path: '/dashboard/overview' },
-      { label: 'كل المستخدمين',icon: <Users size={18} />,           path: '/dashboard/users' },
-      { label: 'العملاء',      icon: <UserCircle2 size={18} />,     path: '/dashboard/users?role=client' },
-      { label: 'المحاسبين',    icon: <BarChart3 size={18} />,       path: '/dashboard/users?role=accountant' },
-      { label: 'المراجعين',    icon: <ScanEye size={18} />,         path: '/dashboard/users?role=reviewer' },
-      { label: 'الكتّاب',      icon: <PenLine size={18} />,         path: '/dashboard/users?role=writer' },
+      { 
+        label: 'المستخدمين', 
+        icon: <Users size={18} />, 
+        path: '/dashboard/users',
+        children: [
+          { label: 'كل المستخدمين', path: '/dashboard/users' },
+          { label: 'العملاء',      path: '/dashboard/users?role=client' },
+          { label: 'المحاسبين',    path: '/dashboard/users?role=accountant' },
+          { label: 'المراجعين',    path: '/dashboard/users?role=reviewer' },
+          { label: 'الكتّاب',      path: '/dashboard/users?role=writer' },
+        ]
+      },
       { label: 'الأدوار',      icon: <ShieldCheck size={18} />,     path: '/dashboard/roles' },
       { label: 'الصلاحيات',    icon: <KeyRound size={18} />,        path: '/dashboard/permissions' },
       { label: 'النشاط',       icon: <FolderKanban size={18} />,    path: '/dashboard/categories' },

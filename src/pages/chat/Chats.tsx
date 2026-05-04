@@ -141,7 +141,7 @@ export default function ChatWidget() {
       {/* ── Floating Button ── */}
       <button
         onClick={() => setIsOpen((o) => !o)}
-        className="fixed bottom-6 left-6 z-50 w-14 h-14 rounded-full shadow-2xl shadow-purple-500/30 bg-gradient-to-br from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 flex items-center justify-center text-white transition-all duration-300 hover:scale-110 active:scale-95"
+        className="fixed bottom-6 right-6 md:right-auto md:left-6 z-50 w-14 h-14 rounded-full shadow-2xl shadow-purple-500/30 bg-gradient-to-br from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 flex items-center justify-center text-white transition-all duration-300 hover:scale-110 active:scale-95"
         aria-label="فتح المحادثات"
       >
         {isOpen ? (
@@ -159,10 +159,10 @@ export default function ChatWidget() {
       {/* ── Chat Panel ── */}
       <div
         className={`
-          fixed bottom-24 left-6 z-50 w-80 sm:w-96 rounded-2xl shadow-2xl shadow-black/20
+          fixed bottom-24 right-6 md:right-auto md:left-6 z-50 w-80 sm:w-96 rounded-2xl shadow-2xl shadow-black/20
           bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10
           flex flex-col overflow-hidden
-          transition-all duration-300 origin-bottom-left
+          transition-all duration-300 origin-bottom-right md:origin-bottom-left
           ${isOpen ? "opacity-100 scale-100 pointer-events-auto" : "opacity-0 scale-90 pointer-events-none"}
         `}
         style={{ maxHeight: "520px" }}
