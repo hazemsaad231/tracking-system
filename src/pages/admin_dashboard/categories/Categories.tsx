@@ -57,7 +57,7 @@ const Categories = () => {
       <div className="p-1 sm:p-4 lg:p-8">
         <div className="max-w-7xl mx-auto">
           {/* ── Main Content ── */}
-          <div className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-lg border border-slate-200/80 dark:border-slate-700/60">
+          <div className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-md border border-slate-200/80 dark:border-slate-700/60">
             {/* ── Toolbar ── */}
             <div className="p-4 flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-slate-200/80 dark:border-slate-700/60">
               {/* Add Category Button */}
@@ -68,7 +68,7 @@ const Categories = () => {
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                <span>إضافة فئة</span>
+                <span>إضافة نشاط</span>
               </button>
 
               {/* Search */}

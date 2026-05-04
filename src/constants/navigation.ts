@@ -93,8 +93,8 @@ export const PAGE_TITLES: Record<string, PageMeta> = {
     subtitle: 'متابعة وإدارة جميع الصلاحيات',
   },
   '/dashboard/categories': {
-    title: 'إدارة الفئات',
-    subtitle: 'متابعة وإدارة جميع الفئات',
+    title: 'إدارة الأنشطة',
+    subtitle: 'متابعة وإدارة جميع الأنشطة',
   },
   '/dashboard/tracking': {
     title: 'التتبع المباشر',

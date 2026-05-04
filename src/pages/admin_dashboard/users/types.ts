@@ -10,7 +10,9 @@ export interface User {
   roles?: string[];
   role?: string;
   created_at?: string;
+  assigned_staff?: AssignmentStaff[]; // يجي من GET /users/{id}/assignments
 }
+
 
 export interface CreateUserPayload {
   name: string;
@@ -48,3 +50,59 @@ export interface UserDetailResponse {
   message: string;
   data: User;
 }
+
+// ─── Staff Assignment ─────────────────────────────────────────────────────────
+
+// Staff المعين (من داخل assigned_staff)
+export interface AssignmentStaff {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string;
+  roles?: string[];
+}
+
+// Response من GET /users/{clientId}/assignments
+export interface AssignmentsApiResponse {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+    is_active: boolean;
+    roles: string[];
+    created_at: string;
+    assigned_staff: AssignmentStaff[];
+  };
+}
+
+export interface AssignStaffPayload {
+  staff_ids: number[];
+}
+
+// ─── Clients assigned to Staff ────────────────────────────────────────────────
+export interface AssignedClient {
+  id: number;
+  name: string;
+  email: string;
+  roles?: string[];
+}
+
+export interface ClientAssignmentsApiResponse {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+    is_active: boolean;
+    roles: string[];
+    assigned_clients: AssignedClient[];
+  };
+}
+
+
+

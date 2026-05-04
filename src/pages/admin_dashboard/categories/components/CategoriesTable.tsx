@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import type { Category } from "../types";
 import SkeletonRow from "./SkeletonRow";
 import SkeletonCard from "./SkeletonCard";
+import React from "react";
 
 const COLUMNS = ["#", "الاسم", "الوصف", "الفئات الفرعية", "تاريخ الإنشاء", "إجراءات"];
 
@@ -220,9 +221,9 @@ export default function CategoriesTable({ categories, isLoading, onEdit, onDelet
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-white/5">
             {categories.map((cat, index) => (
-              <>
+              <React.Fragment key={cat.id}>
                 {/* ── Root Row ── */}
-                <tr key={cat.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-colors duration-150">
+                <tr className="hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-colors duration-150">
                   {/* # */}
                   <td className="px-6 py-4 font-mono text-xs text-slate-400 dark:text-slate-500 text-center">
                     {String(index + 1).padStart(2, "0")}
@@ -323,7 +324,7 @@ export default function CategoriesTable({ categories, isLoading, onEdit, onDelet
                       </td>
                     </tr>
                   ))}
-              </>
+              </React.Fragment>
             ))}
           </tbody>
         </table>

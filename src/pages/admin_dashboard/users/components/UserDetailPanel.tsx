@@ -1,5 +1,6 @@
 import { useQuery} from "@tanstack/react-query";
-import { fetchUserById} from "../api";
+import { fetchUserById, fetchStaffClients } from "../api";
+
 import type { User } from "../types";
 import RoleBadge from "./RoleBadge";
 import StatusBadge from "./StatusBadge";
@@ -45,6 +46,20 @@ const UserDetailPanel = ({ userId, onClose}: UserDetailPanelProps) => {
     queryFn: () => fetchUserById(userId!),
     enabled: isOpen,
   });
+
+  const isClient = user?.roles?.some(r => r.toLowerCase().includes("client")) || user?.role?.toLowerCase().includes("client");
+
+  // Fetch assigned clients if the user is not a client
+  const { data: clientsData, isLoading: clientsLoading } = useQuery({
+    queryKey: ["staffClients", userId],
+    queryFn: () => fetchStaffClients(userId!),
+    enabled: isOpen && !!user && !isClient,
+  });
+
+  console.log(clientsData);
+
+  const assignedClients = clientsData?.data?.assigned_clients ?? [];
+
 
 
   const roles =
@@ -142,6 +157,49 @@ const UserDetailPanel = ({ userId, onClose}: UserDetailPanelProps) => {
                 />
               )}
               <DetailRow label="الحالة" value={<StatusBadge active={user.is_active} />} />
+
+              {/* ── Assigned Clients Section ── */}
+              {!isClient && (
+                <div className="pt-4 mt-2 border-t border-slate-100 dark:border-white/10">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                      العملاء المعينين
+                    </h3>
+                    <span className="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 px-2 py-0.5 rounded-full">
+                      {assignedClients.length}
+                    </span>
+                  </div>
+
+                  {clientsLoading ? (
+                    <div className="space-y-2">
+                      <div className="h-10 rounded-lg bg-slate-100 dark:bg-white/5 animate-pulse" />
+                      <div className="h-10 rounded-lg bg-slate-100 dark:bg-white/5 animate-pulse" />
+                    </div>
+                  ) : assignedClients.length === 0 ? (
+                    <p className="text-xs text-slate-400 dark:text-slate-500 text-center py-3 rounded-lg border border-dashed border-slate-200 dark:border-white/10">
+                      لا يوجد عملاء معينين
+                    </p>
+                  ) : (
+                    <div className="grid grid-cols-1 gap-2">
+                      {assignedClients.map((client) => (
+                        <div
+                          key={client.id}
+                          className="flex items-center gap-3 p-2.5 rounded-lg border border-blue-100 dark:border-blue-500/20 bg-blue-50/50 dark:bg-blue-500/5"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xs shrink-0">
+                            {client.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="flex flex-col min-w-0 flex-1">
+                            <span className="text-sm font-medium text-slate-700 dark:text-slate-200 truncate">{client.name}</span>
+                            <span className="text-xs text-slate-400 font-mono truncate">{client.email}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
             </div>
           ) : (
             <div className="flex items-center justify-center h-full">

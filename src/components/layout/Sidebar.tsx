@@ -17,7 +17,6 @@ const Sidebar = () => {
   const [showConfirm, setShowConfirm] = useState(false);
 
   const userRole = user?.role;
-  console.log("Sidebar Component Rendered. Current User:", user.role) // ✅ تحقق من بيانات المستخدم وصلاحياته في الهيدر
 
   if (!userRole) return null;
   const navConfig = NAVIGATION_MAP[userRole];
@@ -56,7 +55,7 @@ const Sidebar = () => {
       {/* Sidebar */}
       <aside
         className={`fixed lg:sticky top-0 right-0 h-screen z-50 lg:z-auto flex flex-col overflow-visible
-          transition-all duration-300 ease-in-out rounded-l-2xl shadow-lg shadow-violet-500/30
+          transition-all duration-300 ease-in-out rounded-l-3xl shadow-lg shadow-violet-500/30
           ${mobileOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
           ${collapsed ? 'lg:w-[72px]' : 'lg:w-[250px]'}
           w-[250px]`}
@@ -108,7 +107,7 @@ const Sidebar = () => {
             <div key={sIdx}>
               <div className="space-y-0.5">
                 {section.items.map((item, index) => {
-                  const isActive = location.pathname === item.path;
+                  const isActive = location.pathname === item.path || (location.pathname + location.search) === item.path;
                   return (
                     <div key={item.path}>
                       <div className="relative">
@@ -133,13 +132,13 @@ const Sidebar = () => {
                           </span>
                           {!collapsed && (
                             <ChevronRight size={14} className={`transition-all duration-200 ${
-                              isActive ? 'text-white opacity-100' : 'opacity-0 translate-x-2 group-hover:opacity-50 group-hover:translate-x-0'
+                              isActive ? 'text-[--one-color] opacity-100' : 'opacity-0 translate-x-2 group-hover:opacity-50 group-hover:translate-x-0'
                             }`} />
                           )}
                         </Link>
                       </div>
                       {index < section.items.length - 1 && (
-                        <div className="w-2/3 mx-3 h-px my-3 bg-slate-500" />
+                        <div className="w-2/3 mx-3 h-px my-2 bg-slate-500" />
                       )}
                     </div>
                   );

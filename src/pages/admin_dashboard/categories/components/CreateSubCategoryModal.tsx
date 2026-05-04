@@ -99,7 +99,7 @@ export default function CreateSubCategoryModal({ parentCategory, onClose }: Prop
           <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-white/10 shrink-0">
             <div>
               <h2 className="text-base font-semibold text-slate-800 dark:text-white">
-                إضافة فئة فرعية
+                إضافة مهمة
               </h2>
               {parentCategory && (
                 <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
@@ -149,12 +149,12 @@ export default function CreateSubCategoryModal({ parentCategory, onClose }: Prop
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
                 <span className="text-xs text-purple-700 dark:text-purple-300">
-                  الفئة الرئيسية: <strong>{parentCategory.name}</strong> (ID: {parentCategory.id})
+                  النشاط الرئيسية: <strong>{parentCategory.name}</strong> (ID: {parentCategory.id})
                 </span>
               </div>
             )}
 
-            <Field label="اسم الفئة الفرعية" error={nameError}>
+            <Field label="اسم المهمة" error={nameError}>
               <input
                 className={inputCls}
                 placeholder="مثال: iOS و Android"

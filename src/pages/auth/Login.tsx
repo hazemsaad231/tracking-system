@@ -110,24 +110,6 @@ const Login = () => {
                                 نسيت كلمة المرور؟
                             </Link>
 
-                            {/* ذكرني */}
-                            {/* <label className="flex items-center gap-2 cursor-pointer select-none">
-                                <input
-                                    type="checkbox"
-                                    id="remember-me"
-                                    className="sr-only peer"
-                                />
-                                <div className="relative w-4 h-4">
-                                    <div className="w-full h-full bg-slate-200 border border-slate-300 rounded-sm transition-all duration-200 peer-checked:bg-[--one-color] peer-checked:border-[--one-color]"></div>
-                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 peer-checked:opacity-100 transition-opacity duration-200">
-                                        <svg className="w-2.5 h-2.5 text-[--one-color]" fill="none" viewBox="0 0 12 10">
-                                            <path d="M1 5l3.5 3.5L11 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                        </svg>
-                                    </div>
-                                </div>
-                                <span className="text-xs font-medium">ذكرني</span>
-                            </label> */}
-
 
                         </div>
                     </div>

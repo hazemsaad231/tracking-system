@@ -52,7 +52,7 @@ const Settings: React.FC = () => {
         {settingsSections.map((section, sIdx) => (
           <div
             key={sIdx}
-            className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden"
+            className="bg-white dark:bg-slate-900 rounded-2xl shadow-md border border-slate-200/80 dark:border-slate-800 overflow-hidden"
           >
             <div className="flex items-center  gap-3 p-6 pb-4 border-b border-slate-100 dark:border-slate-800">
               <div className="w-9 h-9 rounded-lg bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center text-violet-600 dark:text-violet-400">

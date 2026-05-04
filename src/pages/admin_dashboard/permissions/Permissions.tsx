@@ -113,7 +113,7 @@ const Permissions = () => {
       <div className="p-1 sm:p-4 lg:p-8">
         <div className="max-w-7xl mx-auto">
           {/* ── Main Content ── */}
-          <div className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-lg border border-slate-200/80 dark:border-slate-700/60">
+          <div className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-md border border-slate-200/80 dark:border-slate-700/60">
             {/* ── Toolbar ── */}
             <div className="p-4 flex justify-start items-center gap-4 border-b border-slate-200/80 dark:border-slate-700/60">
               {/* Add Permission Button */}

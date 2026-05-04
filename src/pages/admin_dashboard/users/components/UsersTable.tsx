@@ -1,10 +1,13 @@
 import type { User, ApiResponse } from "../types";
 import StatusBadge from "./StatusBadge";
+import RoleBadge from "./RoleBadge";
+
 import SkeletonRow from "./SkeletonRow";
 import SkeletonCard from "./SkeletonCard";
 
 // ─── Table Header Columns ─────────────────────────────────────────────────────
-const COLUMNS = ["#", "الاسم", "البريد الإلكتروني", "رقم الهاتف", "الحالة", "إجراءات"];
+const COLUMNS = ["#", "الاسم", "البريد الإلكتروني", "رقم الهاتف", "الأدوار", "الحالة", "إجراءات"];
+
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 interface UsersTableProps {
@@ -14,7 +17,9 @@ interface UsersTableProps {
   onView: (id: number) => void;
   onEdit: (user: User) => void;
   onDelete: (user: User) => void;
+  onAssign: (user: User) => void;
 }
+
 
 // ─── Component ───────────────────────────────────────────────────────────────
 const UsersTable = ({
@@ -24,7 +29,9 @@ const UsersTable = ({
   onView,
   onEdit,
   onDelete,
+  onAssign,
 }: UsersTableProps) => {
+
   if (isLoading) {
     return (
       <>
@@ -73,10 +80,19 @@ const UsersTable = ({
             </div>
 
             {/* Card Body */}
-            <div className="text-xs text-slate-500 dark:text-slate-400 font-mono">
-              <span className="font-sans">الهاتف: </span>
-              <span className="tracking-wider">{user.phone}</span>
+            <div className="text-xs text-slate-500 dark:text-slate-400 font-mono flex flex-col gap-2">
+              <div>
+                <span className="font-sans">الهاتف: </span>
+                <span className="tracking-wider">{user.phone}</span>
+              </div>
+              <div className="flex flex-wrap gap-1.5 items-center">
+                <span className="font-sans">الأدوار: </span>
+                {(user.roles && user.roles.length > 0 ? user.roles : [user.role ?? "مستخدم"]).map((r, i) => (
+                  <RoleBadge key={i} role={r} />
+                ))}
+              </div>
             </div>
+
 
             {/* Card Footer */}
             <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-200/80 dark:border-slate-700/60">
@@ -87,6 +103,18 @@ const UsersTable = ({
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
               </button>
+              {/* Assign Staff */}
+              {((user.roles && user.roles.some(r => r.toLowerCase().includes("client"))) || user.role?.toLowerCase().includes("client")) && (
+                <button
+                  onClick={() => onAssign(user)}
+                  className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-100 dark:hover:text-emerald-400 dark:hover:bg-emerald-500/20 transition-colors"
+                  title="تعيين Staff"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                </button>
+              )}
+
+
               <button
                 onClick={() => onEdit(user)}
                 className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-purple-600 hover:bg-purple-100 dark:hover:text-purple-400 dark:hover:bg-purple-500/20 transition-colors"
@@ -102,6 +130,7 @@ const UsersTable = ({
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
               </button>
             </div>
+
           </div>
         ))}
       </div>
@@ -134,12 +163,27 @@ const UsersTable = ({
                 </td>
                 <td className="px-6 py-4 font-mono text-xs text-slate-500 dark:text-slate-300">{user.email}</td>
                 <td className="px-6 py-4 font-mono tracking-wider text-slate-600 dark:text-slate-300">{user.phone}</td>
+                <td className="px-6 py-4">
+                  <div className="flex flex-wrap justify-center gap-1.5">
+                    {(user.roles && user.roles.length > 0 ? user.roles : [user.role ?? "مستخدم"]).map((r, i) => (
+                      <RoleBadge key={i} role={r} />
+                    ))}
+                  </div>
+                </td>
                 <td className="px-6 py-4"><StatusBadge active={user.is_active} /></td>
+
                 <td className="px-6 py-4">
                   <div className="flex items-center justify-center gap-2">
                     <button onClick={() => onView(user.id)} className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:text-blue-400 dark:hover:bg-blue-500/10" title="عرض التفاصيل">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                     </button>
+                    {/* Assign Staff */}
+                    {((user.roles && user.roles.some(r => r.toLowerCase().includes("client"))) || user.role?.toLowerCase().includes("client")) && (
+                      <button onClick={() => onAssign(user)} className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:text-emerald-400 dark:hover:bg-emerald-500/10" title="تعيين Staff">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                      </button>
+                    )}
+
                     <button onClick={() => onEdit(user)} className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-purple-600 hover:bg-purple-50 dark:hover:text-purple-400 dark:hover:bg-purple-500/10" title="تعديل">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                     </button>
@@ -148,6 +192,7 @@ const UsersTable = ({
                     </button>
                   </div>
                 </td>
+
               </tr>
             ))}
           </tbody>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchUsers, deleteUser } from "./api";
 import type { ApiResponse, User } from "./types";
@@ -7,6 +8,8 @@ import CreateUserModal from "./components/CreateUserModal";
 import EditUserModal from "./components/EditUserModal";
 import UserDetailPanel from "./components/UserDetailPanel";
 import DeleteConfirmModal from "./components/DeleteModal";
+import AssignStaffModal from "./components/AssignStaffModal";
+
 
 
 
@@ -19,14 +22,23 @@ const Users = () => {
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [deletingUser, setDeletingUser] = useState<User | null>(null);
+  const [assigningClient, setAssigningClient] = useState<User | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
+
+  const [searchParams] = useSearchParams();
+  const roleFilter = searchParams.get("role") || undefined;
+
   const { data, isLoading, error } = useQuery<ApiResponse>({
-    queryKey: ["users"],
-    queryFn: fetchUsers,
+    queryKey: ["users", roleFilter],
+    queryFn: () => fetchUsers(roleFilter),
   });
 
-  const users = data?.data ?? [];
+
+
+  
+
+  const users = data?.data || [];
   const meta = data?.meta;
 
   const filteredUsers = users.filter(
@@ -65,7 +77,7 @@ const Users = () => {
         <div className="max-w-7xl mx-auto">
           
           {/* ── Main Content ── */}
-          <div className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-lg border border-slate-200/80 dark:border-slate-700/60">
+          <div className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-md border border-slate-200/80 dark:border-slate-700/60">
             {/* ── Toolbar ── */}
             <div className="p-4 flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-slate-200/80 dark:border-slate-700/60">
             
@@ -122,7 +134,9 @@ const Users = () => {
               onView={setSelectedUserId}
               onEdit={setEditingUser}
               onDelete={setDeletingUser}
+              onAssign={setAssigningClient}
             />
+
           </div>
         </div>
       </div>
@@ -153,6 +167,13 @@ const Users = () => {
         onConfirm={() => deleteMutation.mutate(deletingUser!.id)}
         isPending={deleteMutation.isPending}
       />
+
+      {/* ── Assign Staff Modal ── */}
+      <AssignStaffModal
+        client={assigningClient}
+        onClose={() => setAssigningClient(null)}
+      />
+
     </>
   );
 };

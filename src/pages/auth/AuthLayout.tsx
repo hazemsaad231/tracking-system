@@ -13,7 +13,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
         >
 
                {/* Color Overlay */}
-            <div className="absolute inset-0 w-full h-full bg-[--one-color] opacity-90" />
+            <div className="absolute inset-0 w-full h-full bg-[--one-color] opacity-98" />
             {/* Background Image */}
             <div
                 className="absolute inset-0 w-full h-full bg-cover bg-center"

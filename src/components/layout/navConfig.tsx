@@ -17,14 +17,20 @@ const NAVIGATION_MAP: Record<UserRole, { label: string; items: { label: string; 
   admin: {
     label: 'المسؤول',
     items: [
-      { label: 'الرئيسية',   icon: <LayoutDashboard size={18} />, path: '/dashboard/overview' },
-      { label: 'المستخدمين', icon: <Users size={18} />,           path: '/dashboard/users' },
-      { label: 'الأدوار',    icon: <ShieldCheck size={18} />,     path: '/dashboard/roles' },
-      { label: 'الصلاحيات',  icon: <KeyRound size={18} />,        path: '/dashboard/permissions' },
-      { label: 'الفئات',     icon: <FolderKanban size={18} />,    path: '/dashboard/categories' },
-      { label: 'الإعدادات',  icon: <Settings2 size={18} />,       path: '/dashboard/settings' },
+      { label: 'الرئيسية',     icon: <LayoutDashboard size={18} />, path: '/dashboard/overview' },
+      { label: 'كل المستخدمين',icon: <Users size={18} />,           path: '/dashboard/users' },
+      { label: 'العملاء',      icon: <UserCircle2 size={18} />,     path: '/dashboard/users?role=client' },
+      { label: 'المحاسبين',    icon: <BarChart3 size={18} />,       path: '/dashboard/users?role=accountant' },
+      { label: 'المراجعين',    icon: <ScanEye size={18} />,         path: '/dashboard/users?role=reviewer' },
+      { label: 'الكتّاب',      icon: <PenLine size={18} />,         path: '/dashboard/users?role=writer' },
+      { label: 'الأدوار',      icon: <ShieldCheck size={18} />,     path: '/dashboard/roles' },
+      { label: 'الصلاحيات',    icon: <KeyRound size={18} />,        path: '/dashboard/permissions' },
+      { label: 'النشاط',       icon: <FolderKanban size={18} />,    path: '/dashboard/categories' },
+      // { label: 'الإشعارات',     icon: <Bell size={18} />,          path: '/dashboard/notifications' },
+      { label: 'الإعدادات',    icon: <Settings2 size={18} />,       path: '/dashboard/settings' },
     ],
   },
+
   accountant: {
     label: 'المحاسب',
     items: [

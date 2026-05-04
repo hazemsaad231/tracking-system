@@ -113,7 +113,7 @@ export default function CreateCategoryModal({ isOpen, onClose, parentCategory }:
           <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-white/10 shrink-0">
             <div>
               <h2 className="text-base font-semibold text-slate-800 dark:text-white">
-                {isSubCategory ? "إضافة فئة فرعية" : "إضافة فئة جديدة"}
+                {isSubCategory ? "إضافة مهمة فرعية" : "إضافة مهمة جديدة"}
               </h2>
               {isSubCategory && (
                 <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">

@@ -19,6 +19,7 @@ import AccountantDashboard from './pages/accountant_dashboard/Accountant';
 import ReviewerDashboard from './pages/reviewer_dashboard/Reviewer';
 import WriterDashboard from './pages/writer_dashboard/Writer';
 import ClientDashboard from './pages/client_dashboard/Client';
+import Notifications from './pages/notifications/Notifications';
 
 
 
@@ -58,6 +59,7 @@ function App() {
           <Route path='reviewer' element={<ReviewerDashboard />} />
           <Route path='writer' element={<WriterDashboard />} />
           <Route path='client' element={<ClientDashboard />} />
+          <Route path='notifications' element={<Notifications/>}/>
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

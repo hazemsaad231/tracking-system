@@ -229,7 +229,6 @@ export default function CreateUserModal({
 
       {/* Modal */}
       <div
-        dir="rtl"
         role="dialog"
         className={`
           fixed inset-0 z-50 flex items-center justify-center p-4
@@ -255,7 +254,7 @@ export default function CreateUserModal({
           </div>
 
           {/* Form */}
-          <form id="createUserForm" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-5 space-y-4">
+          <form id="createUserForm" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 space-y-4">
             {/* API Error */}
             {apiError && (
               <div className="p-3 rounded-lg bg-red-50 border border-red-200 dark:bg-red-500/10 dark:border-red-500/30">
@@ -323,7 +322,7 @@ export default function CreateUserModal({
           </form>
 
           {/* Footer */}
-          <div className="flex items-center gap-3 px-5 py-4 border-t border-slate-100 dark:border-white/10 shrink-0">
+          <div className="flex items-center gap-3 px-5 py-3 border-t border-slate-100 dark:border-white/10 shrink-0">
             <button
               type="button"
               onClick={onClose}
