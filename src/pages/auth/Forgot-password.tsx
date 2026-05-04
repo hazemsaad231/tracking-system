@@ -25,9 +25,6 @@ const ForgotPassword = () => {
         }
     };
 
-    /* ─── Helper: Input classes (same as Login) ─── */
-    const inputBase = 'w-full pl-10 py-3 text-sm bg-white border border-white focus:ring-violet-500/30 focus:border-violet-500/60 rounded-xl focus:outline-none focus:ring-2 transition-all placeholder-slate-400';
-    const inputError = 'border-red-500/60 focus:ring-red-500/30';
 
     return (
         <AuthLayout>
