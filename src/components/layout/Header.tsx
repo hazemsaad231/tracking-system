@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { PAGE_TITLES, DEFAULT_PAGE_META } from '@/constants';
 import { useTheme } from '@/context/ThemeContext';
 import { useAuthContext } from '@/context/AuthContext';
-import { getUnreadCount } from '@/pages/notifications/api';
+import { fetchNotifications } from '@/pages/notifications/api';
 import NotificationsModal from './NotificationsModal';
 
 
@@ -16,14 +16,16 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuthContext();
 
-  const { data: unreadData } = useQuery({
-    queryKey: ['unread-count'],
-    queryFn: getUnreadCount,
+  const { data: notificationsData } = useQuery({
+    queryKey: ['notifications'],
+    queryFn: fetchNotifications,
     refetchInterval: 60000, // Refetch every 60 seconds
     enabled: !!user,
   });
 
-  const unreadCount = unreadData?.unread_count || 0;
+  const unreadCount = (notificationsData?.data || []).filter(
+    (n: any) => !n.read_at || n.is_read === false
+  ).length;
 
   const [showSearch, setShowSearch] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -122,7 +124,9 @@ const Header: React.FC = () => {
               >
                 <Bell size={18} />
                 {unreadCount > 0 && (
-                  <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-red-500 border-2 border-white dark:border-slate-900" />
+                  <span className="absolute top-0.5 right-0.5 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold border-2 border-white dark:border-slate-900 shadow-sm">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
                 )}
               </button>
               
@@ -155,7 +159,7 @@ const Header: React.FC = () => {
               {showUserMenu && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)} />
-                  <div className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700/50 py-2 z-50 animate-in fade-in slide-in-from-top-4 duration-200">
+                  <div className="fixed sm:absolute top-16 sm:top-full sm:mt-2 left-3 sm:left-auto right-3 sm:-right-6 w-auto sm:w-56 max-h-[85vh] overflow-y-auto bg-white dark:bg-slate-800 rounded-2xl shadow-2xl sm:shadow-xl border border-slate-100 dark:border-slate-700/50 py-2 z-50 animate-in fade-in slide-in-from-top-4 duration-200">
                     <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700/50">
                       <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{user.name}</p>
                       <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">{user.email}</p>

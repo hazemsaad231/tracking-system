@@ -46,6 +46,7 @@ const NotificationsModal: React.FC<NotificationsModalProps> = ({ isOpen, onClose
   const notifications = data?.data || [];
   const unreadCount = notifications.filter(n => !n.read_at).length;
 
+
   const markAsReadMutation = useMutation({
     mutationFn: (id: string) => markAsRead(id),
     onSuccess: () => {
@@ -57,7 +58,6 @@ const NotificationsModal: React.FC<NotificationsModalProps> = ({ isOpen, onClose
   const markAllAsReadMutation = useMutation({
     mutationFn: () => markAllAsRead(),
     onSuccess: () => {
-      toast.success("تم تحديد كل الإشعارات كمقروءة");
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
       queryClient.invalidateQueries({ queryKey: ["unread-count"] });
     },
@@ -75,10 +75,10 @@ const NotificationsModal: React.FC<NotificationsModalProps> = ({ isOpen, onClose
   if (!isOpen) return null;
 
   return (
-      <div 
-        ref={modalRef}
-        className="absolute top-full left-0 sm:left-auto sm:right-0 mt-2 w-fit min-w-[280px] max-w-[400px] max-h-[80vh] bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700/50 z-50 flex flex-col animate-in fade-in slide-in-from-top-4 duration-200 overflow-hidden"
-      >
+        <div
+          ref={modalRef}
+          className="fixed sm:absolute top-16 sm:top-full sm:mt-2 left-3 sm:left-auto right-3 sm:-right-48 w-auto sm:w-[360px] md:w-[400px] lg:w-[420px] max-h-[85vh] sm:max-h-[min(80vh,600px)] bg-white dark:bg-slate-800 rounded-2xl shadow-2xl sm:shadow-xl border border-slate-200 dark:border-slate-700/50 z-50 flex flex-col animate-in fade-in slide-in-from-top-4 duration-200 overflow-hidden"
+        >
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 shrink-0">
           <div className="flex items-center gap-3">
