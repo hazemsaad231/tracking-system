@@ -71,12 +71,12 @@ const Sidebar = () => {
           onClick={() => setCollapsed(!collapsed)}
           aria-label={collapsed ? 'فتح القائمة' : 'تصغير القائمة'}
           className={`absolute top-11 -left-3.5 z-50 hidden lg:flex items-center justify-center
-            w-7 h-7 rounded-full bg-white shadow-lg border border-slate-100
+            w-7 h-7 rounded-full bg-white dark:bg-slate-800 shadow-lg border border-slate-100 dark:border-slate-700
             hover:scale-110 transition-all duration-200`}
         >
           <Play
             size={13}
-            className={`text-slate-500 transition-transform duration-300 ${collapsed ? 'rotate-180' : 'rotate-0'}`}
+            className={`text-slate-500 dark:text-slate-300 transition-transform duration-300 ${collapsed ? 'rotate-180' : 'rotate-0'}`}
           />
         </button>
 
@@ -177,18 +177,18 @@ const Sidebar = () => {
       {showConfirm && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div
-            className="bg-white rounded-2xl shadow-2xl p-7 w-80 text-center"
+            className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl p-7 w-80 text-center border border-transparent dark:border-slate-700/60"
             style={{ animation: 'fadeUp .22s ease' }}
           >
-            <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4 ring-4 ring-red-100">
-              <LogOut className="w-5 h-5 text-red-500" />
+            <div className="w-12 h-12 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center mx-auto mb-4 ring-4 ring-red-100 dark:ring-red-500/20">
+              <LogOut className="w-5 h-5 text-red-500 dark:text-red-400" />
             </div>
-            <h3 className="text-[16px] font-bold text-gray-800 mb-1">تسجيل الخروج</h3>
-            <p className="text-[13px] text-gray-400 mb-6">هل أنت متأكد من أنك تريد تسجيل الخروج؟</p>
+            <h3 className="text-[16px] font-bold text-gray-800 dark:text-white mb-1">تسجيل الخروج</h3>
+            <p className="text-[13px] text-gray-400 dark:text-slate-400 mb-6">هل أنت متأكد من أنك تريد تسجيل الخروج؟</p>
             <div className="flex gap-2.5">
               <button
                 onClick={() => setShowConfirm(false)}
-                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-[13px] font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-700 text-[13px] font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
               >
                 إلغاء
               </button>

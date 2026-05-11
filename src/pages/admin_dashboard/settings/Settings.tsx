@@ -47,8 +47,8 @@ const Settings: React.FC = () => {
   if (isLoading) return <SettingsSkeleton />;
   if (error) return <div>حدث خطأ: {error.message}</div>;
   return (
-    <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in fade-in duration-500 max-w-6xl m-auto">
+    <div className="h-full flex flex-col items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in fade-in duration-500 max-w-7xl m-auto w-full px-4">
         {settingsSections.map((section, sIdx) => (
           <div
             key={sIdx}
@@ -108,7 +108,7 @@ const Settings: React.FC = () => {
         {/* ── Change Password Inline Section ── */}
         <ChangePasswordSection />
       </div>
-    </>
+    </div>
   );
 };
 

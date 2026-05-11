@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { updateUser } from "../api";
-import { fetchRoles } from "../../roles/api";
 import type { User, UpdateUserPayload } from "../types";
+import type { Role } from "../../roles/types";
+import CustomSelect, { type SelectOption } from "./CustomSelect";
 
 // ─── Field ───────────────────────────────────────────────────────────────────
 const Field = ({
@@ -38,15 +37,27 @@ interface FormState {
   role: string;
 }
 
+// ─── Props ───────────────────────────────────────────────────────────────────
+interface EditUserModalProps {
+  user: User | null;
+  onClose: () => void;
+  roles: Role[];
+  rolesLoading: boolean;
+  onSubmit: (payload: UpdateUserPayload) => void;
+  isPending: boolean;
+  apiError: unknown;
+}
+
 // ─── Component ───────────────────────────────────────────────────────────────
 export default function EditUserModal({
   user,
   onClose,
-}: {
-  user: User | null;
-  onClose: () => void;
-}) {
-  const queryClient = useQueryClient();
+  roles,
+  rolesLoading,
+  onSubmit,
+  isPending,
+  apiError,
+}: EditUserModalProps) {
   const isOpen = !!user;
 
   const [form, setForm] = useState<FormState>({
@@ -58,6 +69,7 @@ export default function EditUserModal({
     role: "",
   });
   const [errors, setErrors] = useState<Partial<FormState>>({});
+  const [showPassword, setShowPassword] = useState(false);
 
   // Populate form when user changes
   useEffect(() => {
@@ -72,27 +84,11 @@ export default function EditUserModal({
         role: roleVal,
       });
       setErrors({});
+      setShowPassword(false);
     }
   }, [user]);
 
-  const updateMutation = useMutation({
-    mutationFn: (payload: UpdateUserPayload) => updateUser(user!.id, payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
-      queryClient.invalidateQueries({ queryKey: ["user", user!.id] }); // Update details cache too
-      onClose();
-    },
-  });
-
-  const { data: rolesData, isLoading: rolesLoading } = useQuery({
-    queryKey: ["roles"],
-    queryFn: fetchRoles,
-    staleTime: 5 * 60 * 1000,
-  });
-  const allRoles = rolesData?.data ?? [];
-
-  const isPending = updateMutation.isPending;
-  const apiError = updateMutation.error;
+  const allRoles = roles;
 
   const validate = () => {
     const errs: Partial<FormState> = {};
@@ -120,7 +116,7 @@ export default function EditUserModal({
       payload.email = form.email;
     }
 
-    updateMutation.mutate(payload as UpdateUserPayload);
+    onSubmit(payload as UpdateUserPayload);
   };
 
   const set = (field: keyof FormState, value: string | boolean) =>
@@ -166,7 +162,7 @@ export default function EditUserModal({
 
           {/* Form */}
           <form id="editUserForm" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-5 space-y-4">
-            {apiError && (
+            {!!apiError && (
               <div className="p-3 rounded-lg bg-red-50 border border-red-200 dark:bg-red-500/10 dark:border-red-500/30">
                 <p className="text-xs text-red-600 dark:text-red-400 font-semibold mb-1">
                   {(apiError as any).response?.data?.message || (apiError as Error).message}
@@ -201,13 +197,32 @@ export default function EditUserModal({
             </Field>
 
             <Field label="كلمة المرور (اتركها فارغة لعدم التغيير)" error={errors.password}>
-              <input
-                type="password"
-                className={inputCls}
-                placeholder="اتركها فارغة لعدم التغيير"
-                value={form.password}
-                onChange={(e) => set("password", e.target.value)}
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className={`${inputCls} pl-10`}
+                  placeholder="اتركها فارغة لعدم التغيير"
+                  value={form.password}
+                  onChange={(e) => set("password", e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((p) => !p)}
+                  aria-label={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
+                  className="absolute inset-y-0 left-2 flex items-center justify-center w-7 h-full text-slate-400 hover:text-purple-500 dark:hover:text-purple-400 transition-colors"
+                >
+                  {showPassword ? (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                    </svg>
+                  ) : (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
             </Field>
 
             <Field label="رقم الهاتف" error={errors.phone}>
@@ -220,25 +235,13 @@ export default function EditUserModal({
             </Field>
 
             <Field label="الدور">
-              <select
-                className={inputCls}
+              <CustomSelect
+                options={allRoles.map<SelectOption>((r) => ({ label: r.name, value: r.name }))}
                 value={form.role}
-                onChange={(e) => set("role", e.target.value)}
-                disabled={rolesLoading}
-              >
-                {rolesLoading ? (
-                  <option>جاري التحميل...</option>
-                ) : (
-                  <>
-                    <option value="">اختر دوراً</option>
-                    {allRoles.map((r) => (
-                      <option key={r.id} value={r.name}>
-                        {r.name}
-                      </option>
-                    ))}
-                  </>
-                )}
-              </select>
+                onChange={(v) => set("role", v)}
+                placeholder="اختر دوراً"
+                isLoading={rolesLoading}
+              />
             </Field>
 
             <Field label="الحالة">

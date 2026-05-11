@@ -107,7 +107,15 @@ body {
   --card-bg: #1e293b;
   --border-color: #334155;
   --one-color: #23205A;
+  --one-color-soft: rgba(35, 32, 90, 0.08);
   --two-color: #DFC96D;
+}
+
+.dark {
+  --one-color: #15133a;
+  --one-color-soft: rgba(139, 92, 246, 0.12);
+  --card-bg: #0f172a;
+  --border-color: #1e293b;
 }
 
 /* ─── Custom Scrollbar ─────────────────────────────────────────────────────── */

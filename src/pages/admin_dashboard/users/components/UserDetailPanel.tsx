@@ -1,7 +1,4 @@
-import { useQuery} from "@tanstack/react-query";
-import { fetchUserById, fetchStaffClients } from "../api";
-
-import type { User } from "../types";
+import type { User, AssignedClient } from "../types";
 import RoleBadge from "./RoleBadge";
 import StatusBadge from "./StatusBadge";
 
@@ -33,34 +30,27 @@ const DetailSkeleton = () => (
 // ─── Props ────────────────────────────────────────────────────────────────────
 interface UserDetailPanelProps {
   userId: number | null;
+  user: User | undefined;
+  isLoading: boolean;
+  assignedClients: AssignedClient[];
+  clientsLoading: boolean;
   onClose: () => void;
-  onDeleted: () => void;
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
-const UserDetailPanel = ({ userId, onClose}: UserDetailPanelProps) => {
+const UserDetailPanel = ({
+  userId,
+  user,
+  isLoading,
+  assignedClients,
+  clientsLoading,
+  onClose,
+}: UserDetailPanelProps) => {
   const isOpen = userId !== null;
 
-  const { data: user, isLoading } = useQuery<User>({
-    queryKey: ["user", userId],
-    queryFn: () => fetchUserById(userId!),
-    enabled: isOpen,
-  });
-
-  const isClient = user?.roles?.some(r => r.toLowerCase().includes("client")) || user?.role?.toLowerCase().includes("client");
-
-  // Fetch assigned clients if the user is not a client
-  const { data: clientsData, isLoading: clientsLoading } = useQuery({
-    queryKey: ["staffClients", userId],
-    queryFn: () => fetchStaffClients(userId!),
-    enabled: isOpen && !!user && !isClient,
-  });
-
-  console.log(clientsData);
-
-  const assignedClients = clientsData?.data?.assigned_clients ?? [];
-
-
+  const isClient =
+    user?.roles?.some((r) => r.toLowerCase().includes("client")) ||
+    user?.role?.toLowerCase().includes("client");
 
   const roles =
     user?.roles && user.roles.length > 0 ? user.roles : [user?.role ?? "مستخدم"];

@@ -1,8 +1,26 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchUsers, deleteUser } from "./api";
-import type { ApiResponse, User } from "./types";
+import {
+  fetchUsers,
+  fetchUserById,
+  fetchStaffClients,
+  createUser,
+  updateUser,
+  deleteUser,
+  fetchAssignments,
+  assignStaff,
+  unassignStaff,
+} from "./api";
+import { fetchRoles } from "../roles/api";
+import type {
+  ApiResponse,
+  User,
+  CreateUserPayload,
+  UpdateUserPayload,
+  AssignmentsApiResponse,
+  ClientAssignmentsApiResponse,
+} from "./types";
 import UsersTable from "./components/UsersTable";
 import CreateUserModal from "./components/CreateUserModal";
 import EditUserModal from "./components/EditUserModal";
@@ -10,14 +28,10 @@ import UserDetailPanel from "./components/UserDetailPanel";
 import DeleteConfirmModal from "./components/DeleteModal";
 import AssignStaffModal from "./components/AssignStaffModal";
 
-
-
-
 // ─── Page Component ───────────────────────────────────────────────────────────
 const Users = () => {
-
-  
   const queryClient = useQueryClient();
+
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -25,18 +39,14 @@ const Users = () => {
   const [assigningClient, setAssigningClient] = useState<User | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-
   const [searchParams] = useSearchParams();
   const roleFilter = searchParams.get("role") || undefined;
 
+  // ── Users List ──
   const { data, isLoading, error } = useQuery<ApiResponse>({
     queryKey: ["users", roleFilter],
     queryFn: () => fetchUsers(roleFilter),
   });
-
-
-
-  
 
   const users = data?.data || [];
   const meta = data?.meta;
@@ -48,6 +58,71 @@ const Users = () => {
       user.phone?.includes(searchQuery)
   );
 
+  // ── Roles (shared by Create + Edit modals) ──
+  const { data: rolesData, isLoading: rolesLoading } = useQuery({
+    queryKey: ["roles"],
+    queryFn: fetchRoles,
+    staleTime: 5 * 60 * 1000,
+    enabled: showCreateModal || !!editingUser,
+  });
+  const roles = rolesData?.data ?? [];
+
+  // ── User Detail (slide-over panel) ──
+  const { data: selectedUser, isLoading: detailLoading } = useQuery<User>({
+    queryKey: ["user", selectedUserId],
+    queryFn: () => fetchUserById(selectedUserId!),
+    enabled: selectedUserId !== null,
+  });
+
+  const isSelectedClient =
+    selectedUser?.roles?.some((r) => r.toLowerCase().includes("client")) ||
+    selectedUser?.role?.toLowerCase().includes("client") ||
+    false;
+
+  const { data: staffClientsData, isLoading: staffClientsLoading } =
+    useQuery<ClientAssignmentsApiResponse>({
+      queryKey: ["staffClients", selectedUserId],
+      queryFn: () => fetchStaffClients(selectedUserId!),
+      enabled: selectedUserId !== null && !!selectedUser && !isSelectedClient,
+    });
+  const assignedClients = staffClientsData?.data?.assigned_clients ?? [];
+
+  // ── Assignments (AssignStaffModal) ──
+  const { data: assignmentsData, isLoading: assignmentsLoading } =
+    useQuery<AssignmentsApiResponse>({
+      queryKey: ["assignments", assigningClient?.id],
+      queryFn: () => fetchAssignments(assigningClient!.id),
+      enabled: !!assigningClient,
+    });
+  const assignedStaff = assignmentsData?.data?.assigned_staff ?? [];
+
+  const { data: allUsersData, isLoading: allUsersLoading } = useQuery<ApiResponse>({
+    queryKey: ["all-users"],
+    queryFn: () => fetchUsers(),
+    enabled: !!assigningClient,
+    staleTime: 60_000,
+  });
+  const allUsers = allUsersData?.data ?? [];
+
+  // ── Mutations ──
+  const createMutation = useMutation({
+    mutationFn: (payload: CreateUserPayload) => createUser(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      setShowCreateModal(false);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: UpdateUserPayload }) =>
+      updateUser(id, payload),
+    onSuccess: (_data, vars) => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["user", vars.id] });
+      setEditingUser(null);
+    },
+  });
+
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteUser(id),
     onSuccess: () => {
@@ -55,6 +130,37 @@ const Users = () => {
       setDeletingUser(null);
     },
   });
+
+  const assignMutation = useMutation({
+    mutationFn: (ids: number[]) => assignStaff(assigningClient!.id, ids),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["assignments", assigningClient?.id] });
+    },
+  });
+
+  const unassignMutation = useMutation({
+    mutationFn: (staffId: number) => unassignStaff(assigningClient!.id, [staffId]),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["assignments", assigningClient?.id] });
+    },
+  });
+
+  // ── Close Handlers (also reset mutation state) ──
+  const closeCreateModal = () => {
+    setShowCreateModal(false);
+    createMutation.reset();
+  };
+
+  const closeEditModal = () => {
+    setEditingUser(null);
+    updateMutation.reset();
+  };
+
+  const closeAssignModal = () => {
+    setAssigningClient(null);
+    assignMutation.reset();
+    unassignMutation.reset();
+  };
 
   // ── Error State ──
   if (error)
@@ -75,12 +181,11 @@ const Users = () => {
     <>
       <div className="p-1 sm:p-4 lg:p-8">
         <div className="max-w-7xl mx-auto">
-          
+
           {/* ── Main Content ── */}
           <div className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-md border border-slate-200/80 dark:border-slate-700/60">
             {/* ── Toolbar ── */}
             <div className="p-4 flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-slate-200/80 dark:border-slate-700/60">
-            
 
               {/* Add User Button */}
               <button
@@ -93,7 +198,7 @@ const Users = () => {
                 <span>إضافة مستخدم</span>
               </button>
 
-                <div className="w-full sm:w-auto flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div className="w-full sm:w-auto flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 {/* Search */}
                 <div className="relative w-full sm:w-auto">
                   <svg
@@ -144,20 +249,35 @@ const Users = () => {
       {/* ── Detail Slide-Over ── */}
       <UserDetailPanel
         userId={selectedUserId}
+        user={selectedUser}
+        isLoading={detailLoading}
+        assignedClients={assignedClients}
+        clientsLoading={staffClientsLoading}
         onClose={() => setSelectedUserId(null)}
-        onDeleted={() => setSelectedUserId(null)}
       />
 
       {/* ── Create Modal ── */}
       <CreateUserModal
         isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
+        onClose={closeCreateModal}
+        roles={roles}
+        rolesLoading={rolesLoading}
+        onSubmit={(payload) => createMutation.mutate(payload)}
+        isPending={createMutation.isPending}
+        apiError={createMutation.error}
       />
 
       {/* ── Edit Modal ── */}
       <EditUserModal
         user={editingUser}
-        onClose={() => setEditingUser(null)}
+        onClose={closeEditModal}
+        roles={roles}
+        rolesLoading={rolesLoading}
+        onSubmit={(payload) =>
+          editingUser && updateMutation.mutate({ id: editingUser.id, payload })
+        }
+        isPending={updateMutation.isPending}
+        apiError={updateMutation.error}
       />
 
       {/* ── Delete Confirm Modal ── */}
@@ -171,7 +291,19 @@ const Users = () => {
       {/* ── Assign Staff Modal ── */}
       <AssignStaffModal
         client={assigningClient}
-        onClose={() => setAssigningClient(null)}
+        onClose={closeAssignModal}
+        assignedStaff={assignedStaff}
+        assignmentsLoading={assignmentsLoading}
+        allUsers={allUsers}
+        usersLoading={allUsersLoading}
+        onAssign={(ids) => assignMutation.mutate(ids)}
+        onUnassign={(id) => unassignMutation.mutate(id)}
+        assignPending={assignMutation.isPending}
+        assignSuccess={assignMutation.isSuccess}
+        unassignPendingId={
+          unassignMutation.isPending ? (unassignMutation.variables ?? null) : null
+        }
+        error={assignMutation.error ?? unassignMutation.error}
       />
 
     </>

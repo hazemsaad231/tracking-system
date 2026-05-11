@@ -1,46 +1,42 @@
 import { useEffect, useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchAssignments, assignStaff, unassignStaff, fetchUsers } from "../api";
-import type { User, AssignmentStaff, AssignmentsApiResponse } from "../types";
-
+import type { User, AssignmentStaff } from "../types";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 interface AssignStaffModalProps {
   client: User | null;
   onClose: () => void;
+  assignedStaff: AssignmentStaff[];
+  assignmentsLoading: boolean;
+  allUsers: User[];
+  usersLoading: boolean;
+  onAssign: (ids: number[]) => void;
+  onUnassign: (id: number) => void;
+  assignPending: boolean;
+  assignSuccess: boolean;
+  unassignPendingId: number | null;
+  error: unknown;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
-export default function AssignStaffModal({ client, onClose }: AssignStaffModalProps) {
-  const queryClient = useQueryClient();
+export default function AssignStaffModal({
+  client,
+  onClose,
+  assignedStaff,
+  assignmentsLoading,
+  allUsers,
+  usersLoading,
+  onAssign,
+  onUnassign,
+  assignPending,
+  assignSuccess,
+  unassignPendingId,
+  error,
+}: AssignStaffModalProps) {
   const isOpen = !!client;
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [search, setSearch] = useState("");
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
-  const [removingId, setRemovingId] = useState<number | null>(null);
-
-  // ── Fetch current assignments ──
-  const { data: assignmentsData, isLoading: assignmentsLoading } = useQuery({
-    queryKey: ["assignments", client?.id],
-    queryFn: () => fetchAssignments(client!.id),
-    enabled: isOpen,
-  });
-
-  // ── Fetch all users ──
-  const { data: usersData, isLoading: usersLoading } = useQuery({
-    queryKey: ["users"],
-    queryFn: () => fetchUsers(),
-    staleTime: 60_000,
-  });
-
-  const allUsers: User[] = usersData?.data ?? [];
-
-
-  // الـ Staff المعينين حالياً (من الـ API)
-  const assignedStaff: AssignmentStaff[] =
-    (assignmentsData as AssignmentsApiResponse | undefined)?.data?.assigned_staff ?? [];
-
 
   const assignedIds = assignedStaff.map((s) => s.id);
 
@@ -54,7 +50,7 @@ export default function AssignStaffModal({ client, onClose }: AssignStaffModalPr
     return u.id !== client?.id && !assignedIds.includes(u.id) && isAllowedRole;
   });
 
-  // ── Sync selectedIds ──
+  // ── Reset local UI state when modal closes ──
   useEffect(() => {
     if (!isOpen) {
       setSelectedIds([]);
@@ -65,30 +61,19 @@ export default function AssignStaffModal({ client, onClose }: AssignStaffModalPr
     setSelectedIds([]);
   }, [isOpen]);
 
-  // ── Mutation: إضافة Staff جديد ──
-  const syncMutation = useMutation({
-    mutationFn: (ids: number[]) => assignStaff(client!.id, ids),
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["assignments", client?.id] });
+  // ── Show success message when assign mutation succeeds ──
+  useEffect(() => {
+    if (assignSuccess) {
       setSuccessMsg("تم إضافة Staff بنجاح");
       setSelectedIds([]);
-      setTimeout(() => setSuccessMsg(null), 2000);
-    },
-  });
+      const t = setTimeout(() => setSuccessMsg(null), 2000);
+      return () => clearTimeout(t);
+    }
+  }, [assignSuccess]);
 
-  // ── Mutation: حذف Staff مباشرة ──
-  const unassignMutation = useMutation({
-    mutationFn: (staffId: number) => unassignStaff(client!.id, [staffId]),
-    onMutate: (staffId) => setRemovingId(staffId),
-    onSettled: () => setRemovingId(null),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["assignments", client?.id] });
-    },
-  });
-
-  const isPending = syncMutation.isPending;
-  const apiError = syncMutation.error ?? unassignMutation.error;
+  const isPending = assignPending;
+  const apiError = error;
+  const removingId = unassignPendingId;
 
   const toggleStaff = (id: number, checked: boolean) => {
     setSelectedIds((prev) =>
@@ -98,7 +83,7 @@ export default function AssignStaffModal({ client, onClose }: AssignStaffModalPr
 
   const handleSave = () => {
     if (selectedIds.length === 0) return;
-    syncMutation.mutate(selectedIds);
+    onAssign(selectedIds);
   };
 
   // ── Filtered unassigned list ──
@@ -160,7 +145,7 @@ export default function AssignStaffModal({ client, onClose }: AssignStaffModalPr
                 <p className="text-xs text-green-600 dark:text-green-400 font-medium">{successMsg}</p>
               </div>
             )}
-            {apiError && (
+            {!!apiError && (
               <div className="p-3 rounded-lg bg-red-50 border border-red-200 dark:bg-red-500/10 dark:border-red-500/30">
                 <p className="text-xs text-red-600 dark:text-red-400 font-semibold">
                   {(apiError as any).response?.data?.message || (apiError as Error).message}
@@ -201,7 +186,7 @@ export default function AssignStaffModal({ client, onClose }: AssignStaffModalPr
                       </div>
                       {/* زرار الحذف المباشر */}
                       <button
-                        onClick={() => unassignMutation.mutate(staff.id)}
+                        onClick={() => onUnassign(staff.id)}
                         disabled={removingId === staff.id}
                         className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-100 dark:hover:text-red-400 dark:hover:bg-red-500/20 transition-colors disabled:opacity-40 shrink-0"
                         title="إلغاء التعيين"

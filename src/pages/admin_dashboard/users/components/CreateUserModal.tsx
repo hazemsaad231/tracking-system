@@ -1,8 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createUser } from "../api";
-import { fetchRoles } from "../../roles/api";
+import { useEffect, useState } from "react";
 import type { CreateUserPayload } from "../types";
+import type { Role } from "../../roles/types";
+import CustomSelect, { type SelectOption } from "./CustomSelect";
 
 // ─── Field Wrapper ───────────────────────────────────────────────────────────
 const Field = ({
@@ -29,121 +28,6 @@ const inputCls = `
   transition-colors
 `;
 
-// ─── Custom Select Dropdown ──────────────────────────────────────────────────
-interface SelectOption { label: string; value: string }
-
-const CustomSelect = ({
-  options,
-  value,
-  onChange,
-  placeholder = "اختر...",
-  isLoading,
-}: {
-  options: SelectOption[];
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-  isLoading?: boolean;
-}) => {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  // إغلاق عند الضغط خارج الـ dropdown
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
-  const selected = options.find((o) => o.value === value);
-
-  return (
-    <div ref={ref} className="relative w-full">
-      {/* Trigger Button */}
-      <button
-        type="button"
-        onClick={() => !isLoading && setOpen((p) => !p)}
-        disabled={isLoading}
-        className={`
-          w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm text-right
-          bg-white border border-slate-200
-          dark:bg-white/5 dark:border-white/10
-          hover:border-purple-400 dark:hover:border-purple-500
-          focus:outline-none focus:border-purple-400 dark:focus:border-purple-500
-          transition-colors disabled:opacity-60 disabled:cursor-not-allowed
-          ${open ? "border-purple-400 dark:border-purple-500" : ""}
-        `}
-      >
-        <span className={selected ? "text-slate-800 dark:text-white" : "text-slate-400 dark:text-slate-500"}>
-          {isLoading ? "جاري التحميل..." : selected?.label ?? placeholder}
-        </span>
-        <svg
-          className={`w-4 h-4 text-slate-400 dark:text-slate-500 shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-          fill="none" stroke="currentColor" viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-
-      {/* Dropdown Panel */}
-      <div
-        className={`
-          absolute z-50 w-full mt-1 rounded-xl overflow-hidden
-          bg-white dark:bg-slate-800
-          border border-slate-200 dark:border-white/10
-          shadow-xl shadow-black/10 dark:shadow-black/40
-          transition-all duration-200 origin-top
-          ${open ? "opacity-100 scale-y-100 pointer-events-auto" : "opacity-0 scale-y-95 pointer-events-none"}
-        `}
-      >
-        {/* Placeholder option */}
-        <button
-          type="button"
-          onClick={() => { onChange(""); setOpen(false); }}
-          className={`
-            w-full text-right px-4 py-2.5 text-sm transition-colors
-            text-slate-400 dark:text-slate-500 italic
-            hover:bg-slate-50 dark:hover:bg-white/5
-          `}
-        >
-          {placeholder}
-        </button>
-
-        {/* Divider */}
-        <div className="h-px bg-slate-100 dark:bg-white/5" />
-
-        {/* Options */}
-        <div className="max-h-48 overflow-y-auto">
-          {options.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => { onChange(opt.value); setOpen(false); }}
-              className={`
-                w-full text-right px-4 py-2.5 text-sm flex items-center justify-between gap-2
-                transition-colors duration-150
-                ${value === opt.value
-                  ? "bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-300"
-                  : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5"
-                }
-              `}
-            >
-              <span>{opt.label}</span>
-              {value === opt.value && (
-                <svg className="w-4 h-4 text-purple-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                </svg>
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
 // ─── Constants ───────────────────────────────────────────────────────────────
 const EMPTY_FORM: CreateUserPayload = {
   name: "",
@@ -154,47 +38,43 @@ const EMPTY_FORM: CreateUserPayload = {
   role: "",
 };
 
+// ─── Props ───────────────────────────────────────────────────────────────────
+interface CreateUserModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  roles: Role[];
+  rolesLoading: boolean;
+  onSubmit: (payload: CreateUserPayload) => void;
+  isPending: boolean;
+  apiError: unknown;
+}
+
 // ─── Component ───────────────────────────────────────────────────────────────
 export default function CreateUserModal({
   isOpen,
   onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) {
-  const queryClient = useQueryClient();
-
+  roles,
+  rolesLoading,
+  onSubmit,
+  isPending,
+  apiError,
+}: CreateUserModalProps) {
   const [form, setForm] = useState<CreateUserPayload>(EMPTY_FORM);
   const [errors, setErrors] = useState<Partial<CreateUserPayload>>({});
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       setForm(EMPTY_FORM);
       setErrors({});
+      setShowPassword(false);
     }
   }, [isOpen]);
 
-  const createMutation = useMutation({
-    mutationFn: (payload: CreateUserPayload) => createUser(payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
-      onClose();
-    },
-  });
-
-  const { data: rolesData, isLoading: rolesLoading } = useQuery({
-    queryKey: ["roles"],
-    queryFn: fetchRoles,
-    staleTime: 5 * 60 * 1000,
-  });
-
-  const roleOptions: SelectOption[] = (rolesData?.data ?? []).map((r) => ({
+  const roleOptions: SelectOption[] = roles.map((r) => ({
     label: r.name,
     value: r.name,
   }));
-
-  const isPending = createMutation.isPending;
-  const apiError = createMutation.error;
 
   const validate = () => {
     const errs: Partial<CreateUserPayload> = {};
@@ -209,7 +89,7 @@ export default function CreateUserModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-    createMutation.mutate(form);
+    onSubmit(form);
   };
 
   const set = (field: keyof CreateUserPayload, value: string | boolean) =>
@@ -256,7 +136,7 @@ export default function CreateUserModal({
           {/* Form */}
           <form id="createUserForm" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 space-y-4">
             {/* API Error */}
-            {apiError && (
+            {!!apiError && (
               <div className="p-3 rounded-lg bg-red-50 border border-red-200 dark:bg-red-500/10 dark:border-red-500/30">
                 <p className="text-xs text-red-600 dark:text-red-400 font-semibold mb-1">
                   {(apiError as any).response?.data?.message || (apiError as Error).message}
@@ -280,7 +160,32 @@ export default function CreateUserModal({
             </Field>
 
             <Field label="كلمة المرور" error={errors.password}>
-              <input type="password" className={inputCls} placeholder="أدخل كلمة المرور" value={form.password} onChange={(e) => set("password", e.target.value)} />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className={`${inputCls} pl-10`}
+                  placeholder="أدخل كلمة المرور"
+                  value={form.password}
+                  onChange={(e) => set("password", e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((p) => !p)}
+                  aria-label={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
+                  className="absolute inset-y-0 left-2 flex items-center justify-center w-7 h-full text-slate-400 hover:text-purple-500 dark:hover:text-purple-400 transition-colors"
+                >
+                  {showPassword ? (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                    </svg>
+                  ) : (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
             </Field>
 
             <Field label="رقم الهاتف" error={errors.phone}>
