@@ -1,4 +1,4 @@
-import { ArrowRight, Plus } from "lucide-react";
+import { ArrowRight, Plus, ShieldCheck } from "lucide-react";
 import type { Conversation } from "../types";
 
 interface ChatHeaderProps {
@@ -6,9 +6,11 @@ interface ChatHeaderProps {
   activeConversation: Conversation | null;
   goBack: () => void;
   setView: (view: "list" | "messages" | "new") => void;
+  isAdmin?: boolean;
+  onOpenOversight?: () => void;
 }
 
-export default function ChatHeader({ view, activeConversation, goBack, setView }: ChatHeaderProps) {
+export default function ChatHeader({ view, activeConversation, goBack, setView, isAdmin, onOpenOversight }: ChatHeaderProps) {
   return (
     <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 shrink-0">
       {view !== "list" && (
@@ -37,6 +39,15 @@ export default function ChatHeader({ view, activeConversation, goBack, setView }
           <p className="text-white font-semibold text-sm">محادثة جديدة</p>
         )}
       </div>
+      {view === "list" && isAdmin && onOpenOversight && (
+        <button
+          onClick={onOpenOversight}
+          className="w-8 h-8 flex items-center justify-center rounded-full text-white/80 hover:text-white hover:bg-white/20 transition-colors"
+          title="إشراف المحادثات (للمسؤول)"
+        >
+          <ShieldCheck size={16} />
+        </button>
+      )}
       {view === "list" && (
         <button
           onClick={() => setView("new")}

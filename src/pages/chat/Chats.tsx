@@ -19,6 +19,7 @@ import ConversationList from "./components/ConversationList";
 import MessagesView from "./components/MessagesView";
 import MessageInput from "./components/MessageInput";
 import NewConversation from "./components/NewConversation";
+import AdminChatOversightModal from "./components/AdminChatOversightModal";
 
 type View = "list" | "messages" | "new";
 
@@ -31,6 +32,9 @@ export default function ChatWidget() {
   const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
   const [messageText, setMessageText] = useState("");
   const [contactSearch, setContactSearch] = useState("");
+  const [oversightOpen, setOversightOpen] = useState(false);
+
+  const isAdmin = user?.role === "admin";
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -172,6 +176,8 @@ export default function ChatWidget() {
           activeConversation={activeConversation}
           goBack={goBack}
           setView={setView}
+          isAdmin={isAdmin}
+          onOpenOversight={() => setOversightOpen(true)}
         />
 
         <div className="flex-1 overflow-y-auto min-h-0">
@@ -216,6 +222,14 @@ export default function ChatWidget() {
           />
         )}
       </div>
+
+      {/* ── Admin Oversight Modal ── */}
+      {isAdmin && (
+        <AdminChatOversightModal
+          isOpen={oversightOpen}
+          onClose={() => setOversightOpen(false)}
+        />
+      )}
     </>
   );
 }
