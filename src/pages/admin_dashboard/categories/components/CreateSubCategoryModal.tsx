@@ -34,6 +34,7 @@ export default function CreateSubCategoryModal({ parentCategory, onClose }: Prop
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [count_tasks, setCountTasks] = useState("");
   const [nameError, setNameError] = useState("");
 
   // إعادة تعيين الفورم عند فتح المودال
@@ -41,6 +42,7 @@ export default function CreateSubCategoryModal({ parentCategory, onClose }: Prop
     if (isOpen) {
       setName("");
       setDescription("");
+      setCountTasks("");
       setNameError("");
     }
   }, [isOpen]);
@@ -50,6 +52,7 @@ export default function CreateSubCategoryModal({ parentCategory, onClose }: Prop
       createCategory({
         name: name.trim(),
         ...(description.trim() ? { description: description.trim() } : {}),
+        count_tasks: Number(count_tasks),
         parent_id: parentCategory!.id, // ← مضمون هنا لأن isOpen=true فقط لو parentCategory موجود
       }),
     onSuccess: () => {
@@ -170,6 +173,16 @@ export default function CreateSubCategoryModal({ parentCategory, onClose }: Prop
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
+            </Field>
+            <Field label="عدد المهام" error={nameError}>
+              <input
+                type="number"
+                className={inputCls}
+                placeholder="مثال: 10"
+                value={count_tasks}
+                onChange={(e) => setCountTasks(e.target.value)}
+              />
+              
             </Field>
           </form>
 

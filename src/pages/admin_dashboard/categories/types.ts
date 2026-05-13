@@ -15,6 +15,7 @@ export interface ChildCategory {
   name: string;
   description: string;
   parent_id: number;
+  count_tasks: number;
   created_at: string;
 }
 
@@ -39,6 +40,7 @@ export interface CreateSubCategoryPayload {
   name: string;
   description?: string;
   parent_id: number;
+  count_tasks?: number;
 }
 
 export type CreateCategoryPayload = CreateRootCategoryPayload | CreateSubCategoryPayload;
@@ -47,4 +49,5 @@ export interface UpdateCategoryPayload {
   name: string;
   description?: string;
   parent_id?: number | null;
+  count_tasks?: number;
 }

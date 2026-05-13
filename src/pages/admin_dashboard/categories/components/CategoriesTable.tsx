@@ -5,7 +5,7 @@ import SkeletonRow from "./SkeletonRow";
 import SkeletonCard from "./SkeletonCard";
 import React from "react";
 
-const COLUMNS = ["#", "الاسم", "الوصف", "الفئات الفرعية", "تاريخ الإنشاء", "إجراءات"];
+const COLUMNS = ["#", "الاسم", "الوصف", "الفئات الفرعية", "عدد المهام", "تاريخ الإنشاء", "إجراءات"];
 
 // ─── Props ─────────────────────────────────────────────────────────────────
 interface Props {
@@ -165,6 +165,11 @@ export default function CategoriesTable({ categories, isLoading, onEdit, onDelet
                           <div className="w-3 h-px bg-slate-300 dark:bg-slate-600 shrink-0" />
                           <span className="text-xs text-slate-600 dark:text-slate-300 truncate">{child.name}</span>
                           <span className="text-[9px] font-medium px-1 py-0.5 rounded-full bg-slate-100 text-slate-400 dark:bg-slate-600 dark:text-slate-400 shrink-0">فرعية</span>
+                          {child.count_tasks != null && (
+                            <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300 shrink-0">
+                              {child.count_tasks} مهمة
+                            </span>
+                          )}
                         </div>
                         {/* أزرار التعديل والحذف للفئات الفرعية */}
                         <div className="flex items-center gap-0.5 shrink-0">
@@ -263,6 +268,11 @@ export default function CategoriesTable({ categories, isLoading, onEdit, onDelet
                     </span>
                   </td>
 
+                  {/* عدد المهام — N/A for root */}
+                  <td className="px-6 py-4 text-center">
+                    <span className="text-xs text-slate-300 dark:text-slate-600">—</span>
+                  </td>
+
                   {/* Date */}
                   <td className="px-6 py-4 text-xs text-slate-500 dark:text-slate-400 text-center font-mono">
                     {new Date(cat.created_at).toLocaleDateString("ar-EG")}
@@ -308,6 +318,13 @@ export default function CategoriesTable({ categories, isLoading, onEdit, onDelet
                       {/* Children count (N/A for sub) */}
                       <td className="px-6 py-3 text-center">
                         <span className="text-xs text-slate-300 dark:text-slate-600">—</span>
+                      </td>
+
+                      {/* عدد المهام */}
+                      <td className="px-6 py-3 text-center">
+                        <span className="inline-flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+                          {child.count_tasks ?? 0}
+                        </span>
                       </td>
 
                       {/* Date */}

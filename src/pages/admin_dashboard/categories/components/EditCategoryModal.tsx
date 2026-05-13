@@ -30,7 +30,7 @@ interface Props {
 export default function EditCategoryModal({ category, onClose }: Props) {
   const queryClient = useQueryClient();
 
-  const [form, setForm] = useState({ name: "", description: "" });
+  const [form, setForm] = useState({ name: "", description: "", count_tasks: "" });
   const [errors, setErrors] = useState<{ name?: string }>({});
 
   const isOpen = !!category;
@@ -40,6 +40,7 @@ export default function EditCategoryModal({ category, onClose }: Props) {
       setForm({
         name: category.name,
         description: category.description || "",
+        count_tasks: (category as any).count_tasks?.toString() || "",
       });
       setErrors({});
     }
@@ -63,7 +64,11 @@ export default function EditCategoryModal({ category, onClose }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-    mutation.mutate({ name: form.name, description: form.description });
+    const payload: UpdateCategoryPayload = { name: form.name, description: form.description };
+    if (category?.parent_id && form.count_tasks) {
+      payload.count_tasks = Number(form.count_tasks);
+    }
+    mutation.mutate(payload);
   };
 
   const isPending = mutation.isPending;
@@ -139,6 +144,19 @@ export default function EditCategoryModal({ category, onClose }: Props) {
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
               />
             </Field>
+
+            {/* عدد المهام — يظهر فقط للفئات الفرعية */}
+            {category?.parent_id && (
+              <Field label="عدد المهام">
+                <input
+                  type="number"
+                  className={inputCls}
+                  placeholder="مثال: 10"
+                  value={form.count_tasks}
+                  onChange={(e) => setForm({ ...form, count_tasks: e.target.value })}
+                />
+              </Field>
+            )}
           </form>
 
           {/* Footer */}
