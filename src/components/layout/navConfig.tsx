@@ -30,9 +30,9 @@ const NAVIGATION_MAP: Record<UserRole, { label: string; items: { label: string; 
           { label: 'الكتّاب',      path: '/dashboard/users?role=writer' },
         ]
       },
+            { label: 'النشاط',       icon: <FolderKanban size={18} />,    path: '/dashboard/categories' },
       { label: 'الأدوار',      icon: <ShieldCheck size={18} />,     path: '/dashboard/roles' },
       { label: 'الصلاحيات',    icon: <KeyRound size={18} />,        path: '/dashboard/permissions' },
-      { label: 'النشاط',       icon: <FolderKanban size={18} />,    path: '/dashboard/categories' },
       // { label: 'الإشعارات',     icon: <Bell size={18} />,          path: '/dashboard/notifications' },
       { label: 'الإعدادات',    icon: <Settings2 size={18} />,       path: '/dashboard/settings' },
     ],

@@ -25,13 +25,26 @@ const Categories = () => {
 
   const categories = data?.data ?? [];
 
+  // ── Recursive helpers ──
+  const matchesSearch = (cat: Category, query: string): boolean => {
+    const q = query.toLowerCase();
+    return (
+      cat.name.toLowerCase().includes(q) ||
+      (cat.description?.toLowerCase().includes(q) ?? false) ||
+      (cat.children ?? []).some((child) => matchesSearch(child, query))
+    );
+  };
+
+  const countAllDescendants = (cats: Category[]): number =>
+    cats.reduce((acc, cat) => {
+      const kids = cat.children ?? [];
+      return acc + kids.length + countAllDescendants(kids);
+    }, 0);
+
   // ── Filter ──
-  const filteredCategories = categories.filter(
-    (cat) =>
-      cat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cat.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cat.children.some((child) => child.name.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const filteredCategories = searchQuery
+    ? categories.filter((cat) => matchesSearch(cat, searchQuery))
+    : categories;
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteCategory(id),
@@ -105,7 +118,7 @@ const Categories = () => {
                 <span>
                   الفئات الفرعية:{" "}
                   <strong className="text-slate-700 dark:text-slate-300">
-                    {categories.reduce((acc, cat) => acc + cat.children.length, 0)}
+                    {countAllDescendants(categories)}
                   </strong>
                 </span>
               </div>

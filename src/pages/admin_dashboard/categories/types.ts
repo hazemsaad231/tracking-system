@@ -6,16 +6,8 @@ export interface Category {
   description: string;
   parent_id: number | null;
   parent: Category | null;
-  children: ChildCategory[];
-  created_at: string;
-}
-
-export interface ChildCategory {
-  id: number;
-  name: string;
-  description: string;
-  parent_id: number;
-  count_tasks: number;
+  children: Category[];
+  count_tasks?: number;
   created_at: string;
 }
 

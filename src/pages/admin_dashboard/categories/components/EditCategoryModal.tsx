@@ -40,7 +40,7 @@ export default function EditCategoryModal({ category, onClose }: Props) {
       setForm({
         name: category.name,
         description: category.description || "",
-        count_tasks: (category as any).count_tasks?.toString() || "",
+        count_tasks: category.count_tasks?.toString() || "",
       });
       setErrors({});
     }
